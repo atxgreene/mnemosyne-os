@@ -1,0 +1,1 @@
+Mnemosyne OS - A custom cognitive operating system with Mnemosyne as the built-in living memory core. Stellas Hereditabimus.
