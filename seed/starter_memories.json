@@ -1,0 +1,22 @@
+[
+  {
+    "content": "Mnemosyne OS treats memory as infrastructure: a persistent, inspectable graph that compounds across sessions.",
+    "metadata": {"domain": "mnemosyne", "importance": "high"}
+  },
+  {
+    "content": "Tugboat is the declarative routing layer: goals become memory lookups, skill choices, safety checks, and synthesis steps.",
+    "metadata": {"domain": "tugboat", "importance": "high"}
+  },
+  {
+    "content": "Stellas Hereditabimus is the continuity phrase: inherit the stars by preserving context, skills, and hard-won insight.",
+    "metadata": {"domain": "mythology", "importance": "high"}
+  },
+  {
+    "content": "The Obsidian-style graph is a first-class interface: nodes represent memories and edges reveal emerging channels over time.",
+    "metadata": {"domain": "memory-graph", "importance": "medium"}
+  },
+  {
+    "content": "Security Guardian reviews destructive actions, credential access, deployment decisions, and any operation with personal or system risk.",
+    "metadata": {"domain": "security", "importance": "high"}
+  }
+]

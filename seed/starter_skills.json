@@ -1,0 +1,20 @@
+[
+  {
+    "name": "research_synthesis",
+    "description": "Gather, compare, cite, and compress long-horizon research into a useful artifact.",
+    "triggers": ["research", "synthesize", "sources", "literature", "summary"],
+    "body": "Clarify the question, retrieve relevant memory, gather external sources when available, compare claims, cite evidence, and produce a concise synthesis with next actions."
+  },
+  {
+    "name": "tugboat_route",
+    "description": "Convert a high-level goal into memory retrieval, skill selection, safety checks, and execution steps.",
+    "triggers": ["route", "plan", "goal", "orchestrate", "delegate"],
+    "body": "Classify the goal, select memory domains, choose skills, check risk, then produce a short executable sequence."
+  },
+  {
+    "name": "security_guardian",
+    "description": "Review high-impact actions before execution.",
+    "triggers": ["security", "approval", "credential", "delete", "deploy", "dangerous command"],
+    "body": "Check intent, scope, reversibility, permissions, credential exposure, audit trail, and rollback path before allowing action."
+  }
+]

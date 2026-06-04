@@ -1,120 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mnemosyne OS • Stellas Hereditabimus</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
-        body { font-family: 'Inter', system_ui, sans-serif; }
-        .title-font { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 600; }
-        .cosmic-bg { background: radial-gradient(circle at center, #1a1433 0%, #0f0a1f 100%); }
-        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
-        .demo-gif { border: 1px solid rgba(244,211,94,0.2); box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4); }
-        .nav-link { transition: color 0.2s ease; }
-        .nav-link:hover { color: #f4d35e; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mnemosyne OS • Stellas Hereditabimus</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Space+Grotesk:wght@500;600&display=swap');
+    body{font-family:Inter,system-ui,sans-serif;background:radial-gradient(circle at top,#211747 0,#0a0814 42%,#05040a 100%);}
+    .title{font-family:'Space Grotesk',Inter,sans-serif}.glass{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(18px)}
+  </style>
 </head>
-<body class="bg-[#0a0814] text-white cosmic-bg">
-    <!-- Nav -->
-    <nav class="border-b border-white/10 bg-[#0a0814]/80 backdrop-blur-xl sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-            <div class="flex items-center gap-x-3">
-                <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#f4d35e] to-[#c9a227] flex items-center justify-center">
-                    <i class="fa-solid fa-infinity text-[#0a0814] text-2xl"></i>
-                </div>
-                <span class="title-font text-2xl font-semibold tracking-tighter">Mnemosyne OS</span>
-            </div>
-            <div class="flex items-center gap-x-8 text-sm">
-                <a href="#demo" class="nav-link text-white/70 hover:text-white">Demo</a>
-                <a href="#features" class="nav-link text-white/70 hover:text-white">Features</a>
-                <a href="#tools" class="nav-link text-white/70 hover:text-white">Tools</a>
-                <a href="https://github.com/atxgreene/mnemosyne-os" class="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-3xl flex items-center gap-x-2 text-sm">
-                    <i class="fa-brands fa-github"></i>
-                    <span>GitHub</span>
-                </a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero -->
-    <div class="max-w-5xl mx-auto px-6 pt-16 pb-12 text-center">
-        <div class="inline-flex items-center gap-x-2 px-4 py-1 rounded-3xl bg-white/5 border border-white/10 mb-6 text-sm">
-            <div class="w-2 h-2 bg-[#f4d35e] rounded-full animate-pulse"></div>
-            <span class="font-medium text-[#f4d35e]">Cognitive Operating System v0.2</span>
-        </div>
-        <h1 class="title-font text-7xl font-semibold tracking-tighter mb-4">Memory Awakens.<br><span class="bg-gradient-to-r from-[#f4d35e] via-[#f4d35e] to-white bg-clip-text text-transparent">The Stars Await.</span></h1>
-        <p class="max-w-lg mx-auto text-xl text-white/70 mb-8">A custom Ubuntu-based OS with Mnemosyne as the built-in living memory core. Animated neural graphs, native CLI, and deep personal mythology integration.</p>
-        <div class="flex justify-center gap-x-4">
-            <a href="#demo" class="px-8 py-4 bg-[#f4d35e] text-[#0a0814] font-semibold rounded-3xl flex items-center gap-x-3 hover:brightness-105">See the Demo</a>
-            <a href="https://github.com/atxgreene/mnemosyne-os" class="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-3xl flex items-center gap-x-3">View on GitHub</a>
-        </div>
+<body class="text-white">
+  <nav class="sticky top-0 z-50 bg-[#0a0814]/80 border-b border-white/10 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-2xl bg-[#f4d35e] text-[#0a0814] grid place-items-center font-black">∞</div><span class="title text-2xl font-semibold tracking-tight">Mnemosyne OS</span></div>
+      <div class="flex gap-6 text-sm text-white/70"><a href="#demo">Demo</a><a href="#features">Features</a><a href="#quickstart">Quick Start</a><a class="text-[#f4d35e]" href="https://github.com/atxgreene/mnemosyne-os">GitHub</a></div>
     </div>
+  </nav>
 
-    <!-- Demo -->
-    <div id="demo" class="max-w-6xl mx-auto px-6 pb-16">
-        <div class="text-center mb-8">
-            <div class="uppercase tracking-[2px] text-xs text-[#f4d35e] mb-2">Experience</div>
-            <h2 class="title-font text-5xl font-semibold tracking-tighter">From Boot to Neural Graph</h2>
-        </div>
+  <section class="max-w-5xl mx-auto px-6 pt-16 pb-12 text-center">
+    <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/5 border border-white/10 mb-6 text-sm"><span class="w-2 h-2 bg-[#f4d35e] rounded-full animate-pulse"></span><span class="text-[#f4d35e]">Runnable v0.1 scaffold</span></div>
+    <h1 class="title text-6xl md:text-7xl font-semibold tracking-tighter mb-5">Memory Awakens.<br><span class="text-[#f4d35e]">The Stars Await.</span></h1>
+    <p class="max-w-2xl mx-auto text-xl text-white/70 mb-8">A local-first cognitive OS foundation: Mnemosyne memory, Tugboat routing, native CLI, FastAPI server, and an Obsidian-style graph interface.</p>
+    <div class="flex justify-center gap-4 flex-wrap"><a href="https://github.com/atxgreene/mnemosyne-os" class="px-7 py-4 bg-[#f4d35e] text-[#0a0814] rounded-3xl font-bold">Clone the Repo</a><a href="#demo" class="px-7 py-4 bg-white/5 border border-white/10 rounded-3xl">See Demo</a></div>
+  </section>
 
-        <div class="glass rounded-3xl p-4 border border-white/10 mb-6">
-            <img src="https://raw.githubusercontent.com/atxgreene/mnemosyne-os/main/assets/mnemosyne_os_demo.gif" class="w-full rounded-2xl demo-gif" alt="Mnemosyne OS Demo">
-        </div>
-
-        <!-- Interactive Graph -->
-        <div class="glass rounded-3xl p-8 border border-white/10">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <div class="font-semibold text-2xl">Interactive Memory Graph</div>
-                    <div class="text-sm text-white/60">Obsidian-style neural visualization • Click nodes</div>
-                </div>
-                <button onclick="regenerateGraph()" class="px-5 py-2 text-sm bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl flex items-center gap-x-2">
-                    <i class="fa-solid fa-sync"></i> <span>Regenerate</span>
-                </button>
-            </div>
-            <div id="live-graph" style="height: 420px; background:#0a0814; border-radius:16px; border:1px solid rgba(255,255,255,0.1);"></div>
-        </div>
+  <section id="demo" class="max-w-6xl mx-auto px-6 pb-16">
+    <div class="glass rounded-3xl p-4 mb-6"><img src="https://raw.githubusercontent.com/atxgreene/mnemosyne-os/main/assets/mnemosyne_os_demo.gif" class="w-full rounded-2xl" alt="Mnemosyne OS demo gif"></div>
+    <div class="glass rounded-3xl p-8">
+      <div class="flex justify-between gap-4 items-center mb-5"><div><h2 class="title text-4xl font-semibold">Interactive Memory Graph</h2><p class="text-white/60">Concept demo. The repo now also includes a local dashboard wired to the real API.</p></div><button onclick="regenerateGraph()" class="px-5 py-2 rounded-2xl bg-white/10 border border-white/10">Regenerate</button></div>
+      <div id="live-graph" style="height:420px;background:#080511;border-radius:18px;border:1px solid rgba(255,255,255,.1)"></div>
     </div>
+  </section>
 
-    <script>
-        let network;
-        function createGraph() {
-            const container = document.getElementById('live-graph');
-            const nodes = new vis.DataSet([
-                {id:1, label:"Mantle Convection", group:"physics", size:30},
-                {id:2, label:"BCE Framework", group:"physics", size:26},
-                {id:3, label:"Stellas Hereditabimus", group:"mythology", size:34},
-                {id:4, label:"Phoenix Resilience", group:"mythology", size:24},
-                {id:5, label:"Above Black", group:"consciousness", size:22},
-                {id:6, label:"Talisman Practice", group:"mythology", size:23},
-                {id:7, label:"Boundary Conditions", group:"physics", size:20}
-            ]);
-            const edges = new vis.DataSet([
-                {from:1,to:2,width:4,color:'#f4d35e'},
-                {from:3,to:4,width:5,color:'#f4d35e'},
-                {from:3,to:6,width:3,color:'#f4d35e'},
-                {from:5,to:1,width:2,color:'#a78bfa'},
-                {from:2,to:7,width:3,color:'#f4d35e'}
-            ]);
-            network = new vis.Network(container, {nodes, edges}, {
-                nodes: {shape:'dot', font:{color:'#fff',size:15}, borderWidth:3},
-                edges: {width:2, color:{color:'#f4d35e',opacity:0.6}, smooth:true},
-                physics: {stabilization:{iterations:100}}
-            });
-            setTimeout(() => network.fit({animation:{duration:900}}), 700);
-        }
-        function regenerateGraph() {
-            if (network) { network.destroy(); createGraph(); }
-        }
-        window.onload = () => { createGraph(); };
-    </script>
+  <section id="features" class="max-w-6xl mx-auto px-6 pb-16 grid md:grid-cols-3 gap-5">
+    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Living Memory</h3><p class="text-white/65">JSONL-backed local memory with search and graph extraction. Designed to evolve into vector + symbolic retrieval.</p></div>
+    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Tugboat Routing</h3><p class="text-white/65">Goals route through memory hits, suggested skills, safety policy, and synthesis steps.</p></div>
+    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Native CLI</h3><p class="text-white/65">Use <code>mnemosyne store</code>, <code>search</code>, <code>route</code>, and <code>graph</code> from the terminal.</p></div>
+    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Security Guardian</h3><p class="text-white/65">Seeded as a first-class skill concept for reviewing destructive, credential, and deployment actions.</p></div>
+    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Local Dashboard</h3><p class="text-white/65">A no-build HTML dashboard talks to <code>localhost:8765</code> and renders live memory graph data.</p></div>
+    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Ubuntu Path</h3><p class="text-white/65">Includes a Cubic-oriented installer script for moving toward a custom Ubuntu-based ISO.</p></div>
+  </section>
 
-    <footer class="text-center text-xs text-white/40 py-10 border-t border-white/10">
-        Stellas Hereditabimus • Reality Research Program • 2026
-    </footer>
+  <section id="quickstart" class="max-w-4xl mx-auto px-6 pb-20">
+    <div class="glass rounded-3xl p-8"><h2 class="title text-4xl font-semibold mb-4">Quick Start</h2><pre class="bg-black/40 rounded-2xl p-5 overflow-auto text-sm text-[#f4d35e]"><code>git clone https://github.com/atxgreene/mnemosyne-os.git
+cd mnemosyne-os
+./scripts/install-local.sh
+./scripts/run-dev.sh
+
+python bin/mnemosyne store "Memory graphs make continuity visible" --domain memory-graph
+python bin/mnemosyne route "Synthesize cognitive OS design" --json</code></pre><p class="text-white/60 mt-4">Security note: keep the API local-only. Authentication is future work.</p></div>
+  </section>
+
+<script>
+const graphData={nodes:[{id:1,label:'Mnemosyne',group:'memory'},{id:2,label:'Tugboat',group:'routing'},{id:3,label:'Skills',group:'skills'},{id:4,label:'Security Guardian',group:'security'},{id:5,label:'Memory Graph',group:'memory'},{id:6,label:'Ubuntu ISO',group:'os'},{id:7,label:'CLI',group:'tooling'},{id:8,label:'Dashboard',group:'tooling'}],edges:[{from:1,to:2},{from:1,to:5},{from:2,to:3},{from:2,to:4},{from:5,to:8},{from:7,to:1},{from:6,to:1},{from:8,to:2},{from:3,to:4}]};
+function regenerateGraph(){const colors={memory:'#f4d35e',routing:'#6fb9f0',skills:'#8eee98',security:'#ff93b2',os:'#cb86db',tooling:'#fb6f5f'}; const nodes=new vis.DataSet(graphData.nodes.map(n=>({...n,color:colors[n.group],font:{color:'#fff'},borderWidth:0,shape:'dot',size:22+Math.random()*10}))); const edges=new vis.DataSet(graphData.edges.map(e=>({...e,color:{color:'rgba(255,255,255,.22)'},width:1+Math.random()*2}))); new vis.Network(document.getElementById('live-graph'),{nodes,edges},{physics:{stabilization:false,barnesHut:{gravitationalConstant:-5000,springLength:150}},interaction:{hover:true},nodes:{shadow:true},edges:{smooth:true}});} regenerateGraph();
+</script>
 </body>
 </html>
