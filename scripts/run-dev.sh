@@ -1,12 +1,7 @@
-#!/usr/bin/env bash
-set -euo pipefail
-cd "$(dirname "$0")/.."
-if [ -f .venv/Scripts/activate ]; then
-  source .venv/Scripts/activate
-elif [ -f .venv/bin/activate ]; then
-  source .venv/bin/activate
-fi
-export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
-python scripts/load-starter-content.py
-printf 'Dashboard: file://%s/dashboard/mnemosyne-panels.html\n' "$PWD"
-python -m uvicorn mnemosyne.services.api_server:app --host 127.0.0.1 --port 8765 --reload
+#!/bin/bash
+set -e
+
+echo "Starting Mnemosyne development server..."
+source .venv/bin/activate || true
+
+uvicorn mnemosyne.services.api_server:app --reload --host 0.0.0.0 --port 8765
