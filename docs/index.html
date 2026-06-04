@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mnemosyne OS • Stellas Hereditabimus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        :root {
+            --gold: #f4d35e;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .title-font {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .cosmic-bg {
+            background: radial-gradient(circle at center, #1a1433 0%, #0f0a1f 100%);
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .demo-gif {
+            border: 1px solid rgba(244, 211, 94, 0.2);
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+        }
+    </style>
+</head>
+<body class="bg-[#0a0814] text-white cosmic-bg">
+    <nav class="border-b border-white/10 bg-[#0a0814]/80 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#f4d35e] to-[#c9a227] flex items-center justify-center">
+                    <i class="fa-solid fa-infinity text-[#0a0814] text-2xl"></i>
+                </div>
+                <span class="title-font text-2xl font-semibold tracking-tighter">Mnemosyne OS</span>
+            </div>
+            <div class="flex items-center gap-x-8 text-sm">
+                <a href="#demo" class="nav-link text-white/70 hover:text-white">Demo</a>
+                <a href="#features" class="nav-link text-white/70 hover:text-white">Features</a>
+                <a href="https://github.com/atxgreene/mnemosyne-os" class="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-3xl text-sm flex items-center gap-x-2">
+                    <i class="fa-brands fa-github"></i>
+                    <span>GitHub</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-5xl mx-auto px-6 pt-16 pb-12 text-center">
+        <h1 class="title-font text-6xl font-semibold tracking-tighter mb-4">Memory Awakens.<br><span class="bg-gradient-to-r from-[#f4d35e] to-white bg-clip-text text-transparent">The Stars Await.</span></h1>
+        <p class="text-xl text-white/70 mb-8">A custom Ubuntu-based cognitive operating system with Mnemosyne as the built-in living memory core.</p>
+        <a href="#demo" class="px-8 py-4 bg-[#f4d35e] text-[#0a0814] font-semibold rounded-3xl inline-flex items-center gap-x-3">See the Demo</a>
+    </div>
+
+    <div id="demo" class="max-w-5xl mx-auto px-6 pb-16">
+        <div class="glass rounded-3xl p-4 border border-white/10">
+            <img src="https://raw.githubusercontent.com/atxgreene/mnemosyne-os/main/assets/mnemosyne_os_demo.gif" class="w-full rounded-2xl" alt="Mnemosyne OS Demo GIF">
+        </div>
+    </div>
+
+    <footer class="text-center text-xs text-white/40 py-8">
+        Stellas Hereditabimus • Built for Greenie
+    </footer>
+</body>
+</html>
