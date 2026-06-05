@@ -22,7 +22,7 @@ def test_iso_build_workflow_exists_and_installs_live_build_toolchain():
 def test_iso_build_workflow_prepares_builds_hashes_and_uploads_iso():
     text = WORKFLOW.read_text(encoding="utf-8")
     for required in [
-        "./scripts/prepare-live-build.sh",
+        "bash ./scripts/prepare-live-build.sh",
         "sudo lb clean --purge || true",
         "sudo lb config",
         "sudo lb build",

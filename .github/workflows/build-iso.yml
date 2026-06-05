@@ -55,7 +55,7 @@ jobs:
             ca-certificates
 
       - name: Prepare live-build source include
-        run: ./scripts/prepare-live-build.sh
+        run: bash ./scripts/prepare-live-build.sh
 
       - name: Build hybrid ISO
         working-directory: iso/live-build
