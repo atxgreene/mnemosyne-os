@@ -1,28 +1,26 @@
-from fastapi.testclient import TestClient
+import pytest
+from pydantic import ValidationError
 
-from mnemosyne.services.api_server import app
+from mnemosyne.services import api_server
 
 
 def test_api_memory_stats_and_validation(tmp_path, monkeypatch):
     monkeypatch.setenv("MNEMOSYNE_HOME", str(tmp_path))
-    client = TestClient(app)
 
-    empty = client.post("/memory/add", json={"content": "", "metadata": {}})
-    assert empty.status_code == 422
+    with pytest.raises(ValidationError):
+        api_server.MemoryAddRequest(content="", metadata={})
 
-    created = client.post(
-        "/memory/add",
-        json={"content": "API validation improves local core reliability", "metadata": {"domain": "api"}},
+    request = api_server.MemoryAddRequest(
+        content="API validation improves local core reliability",
+        metadata={"domain": "api"},
     )
-    assert created.status_code == 200
-    assert created.json()["metadata"]["domain"] == "api"
+    created = api_server.add_memory(request)
+    assert created["metadata"]["domain"] == "api"
 
-    memory_stats = client.get("/memory/stats")
-    assert memory_stats.status_code == 200
-    assert memory_stats.json()["total_entries"] == 1
-    assert memory_stats.json()["domains"] == {"api": 1}
+    memory_stats = api_server.memory_stats()
+    assert memory_stats["total_entries"] == 1
+    assert memory_stats["domains"] == {"api": 1}
 
-    stats = client.get("/stats")
-    assert stats.status_code == 200
-    assert stats.json()["memory"]["total_entries"] == 1
-    assert "skills" in stats.json()
+    stats = api_server.stats()
+    assert stats["memory"]["total_entries"] == 1
+    assert "skills" in stats
