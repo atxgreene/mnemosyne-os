@@ -10,11 +10,12 @@ def test_api_memory_stats_and_validation(tmp_path, monkeypatch):
     with pytest.raises(ValidationError):
         api_server.MemoryAddRequest(content="", metadata={})
 
-    request = api_server.MemoryAddRequest(
-        content="API validation improves local core reliability",
-        metadata={"domain": "api"},
+    created = api_server.add_memory(
+        api_server.MemoryAddRequest(
+            content="API validation improves local core reliability",
+            metadata={"domain": "api"},
+        )
     )
-    created = api_server.add_memory(request)
     assert created["metadata"]["domain"] == "api"
 
     memory_stats = api_server.memory_stats()
