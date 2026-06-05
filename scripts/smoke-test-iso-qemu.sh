@@ -60,7 +60,12 @@ qemu-system-x86_64 \
 QEMU_PID=$!
 
 cleanup() {
-  rm -rf "$TMPDIR"
+  # xorriso can extract ISO files with read-only permissions; cleanup must not
+  # turn an otherwise passing smoke test into a failure.
+  if [ -n "${TMPDIR:-}" ] && [ -d "$TMPDIR" ]; then
+    chmod -R u+w "$TMPDIR" >/dev/null 2>&1 || true
+    rm -rf "$TMPDIR" >/dev/null 2>&1 || true
+  fi
   if kill -0 "$QEMU_PID" >/dev/null 2>&1; then
     kill "$QEMU_PID" >/dev/null 2>&1 || true
     wait "$QEMU_PID" >/dev/null 2>&1 || true

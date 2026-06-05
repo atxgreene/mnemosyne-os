@@ -27,6 +27,8 @@ def test_qemu_smoke_script_waits_for_guest_pass_marker():
         "xorriso",
         "-kernel",
         "console=ttyS0,115200n8",
+        "chmod -R u+w",
+        "rm -rf \"$TMPDIR\" >/dev/null 2>&1 || true",
         "MNEMOSYNE_ISO_SMOKE: PASS",
         "MNEMOSYNE_ISO_SMOKE: FAIL",
     ]:
