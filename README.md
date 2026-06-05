@@ -23,14 +23,15 @@ What works today:
 - Cubic-oriented Ubuntu service install script
 - OS packaging foundation with systemd installer
 - live-build ISO scaffold for a flashable Linux developer preview
-- GitHub Actions ISO build workflow on the ISO feature branch
-- Checksum-verified Debian Bookworm live ISO artifact, ready for VM smoke testing
+- GitHub Actions ISO build workflow on `main`
+- Checksum-verified Debian Bookworm live ISO artifact
+- CI QEMU smoke test that verifies boot, `mnemosyne.service`, `/health`, and CLI search inside the live VM
 - Explicit source-on-OS target at `/opt/mnemosyne-os/source`
 
 What is still future work:
 
-- VM boot smoke-test pass/fail artifact for the generated ISO
-- Flash-ready ISO release candidate after service/API/CLI checks pass inside the VM
+- Published/release-tagged ISO download
+- Hardware USB boot testing beyond QEMU
 - Real vector store backend
 - LLM-powered skill distillation
 - Profile isolation
@@ -108,6 +109,14 @@ python bin/mnemosyne dashboard
 - `GET /skills`
 - `POST /skills`
 - `POST /tugboat/route`
+
+## Current limitations
+
+- Storage uses simple JSONL files; this is intentional for v0.1 but not the long-term memory backend.
+- API is local-only and unauthenticated; do not bind it to a public interface.
+- No bundled offline LLM yet; routing and skill distillation are still scaffold-level.
+- QEMU smoke testing passes in CI, but hardware USB boot testing is still a separate gate.
+- Security Guardian enforcement is not active beyond early routing/design hints.
 
 ## Custom Linux / live-build path
 

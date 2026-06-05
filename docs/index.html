@@ -16,7 +16,7 @@
   <nav class="sticky top-0 z-50 bg-[#0a0814]/80 border-b border-white/10 backdrop-blur-xl">
     <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
       <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-2xl bg-[#f4d35e] text-[#0a0814] grid place-items-center font-black">∞</div><span class="title text-2xl font-semibold tracking-tight">Mnemosyne OS</span></div>
-      <div class="flex gap-6 text-sm text-white/70"><a href="#demo">Demo</a><a href="#features">Features</a><a href="#quickstart">Quick Start</a><a class="text-[#f4d35e]" href="https://github.com/atxgreene/mnemosyne-os">GitHub</a></div>
+      <div class="flex gap-6 text-sm text-white/70"><a href="#status">Status</a><a href="#demo">Demo</a><a href="#features">Features</a><a href="#quickstart">Quick Start</a><a class="text-[#f4d35e]" href="https://github.com/atxgreene/mnemosyne-os">GitHub</a></div>
     </div>
   </nav>
 
@@ -25,6 +25,12 @@
     <h1 class="title text-6xl md:text-7xl font-semibold tracking-tighter mb-5">Memory Awakens.<br><span class="text-[#f4d35e]">The Stars Await.</span></h1>
     <p class="max-w-2xl mx-auto text-xl text-white/70 mb-8">A local-first cognitive OS foundation: Mnemosyne memory, Tugboat routing, native CLI, FastAPI server, and an Obsidian-style graph interface.</p>
     <div class="flex justify-center gap-4 flex-wrap"><a href="https://github.com/atxgreene/mnemosyne-os" class="px-7 py-4 bg-[#f4d35e] text-[#0a0814] rounded-3xl font-bold">Clone the Repo</a><a href="#demo" class="px-7 py-4 bg-white/5 border border-white/10 rounded-3xl">See Demo</a></div>
+  </section>
+
+  <section id="status" class="max-w-6xl mx-auto px-6 pb-12 grid md:grid-cols-3 gap-5">
+    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Runnable v0.1 Core</h3><p class="text-white/65">FastAPI backend, JSONL memory, native CLI, Tugboat routing stub, skills store, and local dashboard are available today.</p></div>
+    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">ISO Track on Main</h3><p class="text-white/65">Debian Bookworm live-build workflow now builds a hybrid ISO artifact with checksum verification in GitHub Actions.</p></div>
+    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">QEMU Smoke Verified</h3><p class="text-white/65">CI boots the live image and verifies mnemosyne.service, the /health endpoint, and CLI search inside the VM.</p></div>
   </section>
 
   <section id="demo" class="max-w-6xl mx-auto px-6 pb-16">
@@ -41,7 +47,7 @@
     <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Native CLI</h3><p class="text-white/65">Use <code>mnemosyne store</code>, <code>search</code>, <code>route</code>, and <code>graph</code> from the terminal.</p></div>
     <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Security Guardian</h3><p class="text-white/65">Seeded as a first-class skill concept for reviewing destructive, credential, and deployment actions.</p></div>
     <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Local Dashboard</h3><p class="text-white/65">A no-build HTML dashboard talks to <code>localhost:8765</code> and renders live memory graph data.</p></div>
-    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Ubuntu Path</h3><p class="text-white/65">Includes a Cubic-oriented installer script for moving toward a custom Ubuntu-based ISO.</p></div>
+    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Debian Live ISO</h3><p class="text-white/65">Reproducible live-build workflow produces a Bookworm hybrid ISO and validates it through QEMU smoke checks.</p></div>
   </section>
 
   <section id="quickstart" class="max-w-4xl mx-auto px-6 pb-20">
