@@ -21,10 +21,16 @@ What works today:
 - Starter memory + starter skills seed files
 - GitHub Pages concept/demo site
 - Cubic-oriented Ubuntu service install script
+- OS packaging foundation with systemd installer
+- live-build ISO scaffold for a flashable Linux developer preview
+- GitHub Actions ISO build workflow on the ISO feature branch
+- Checksum-verified Debian Bookworm live ISO artifact, ready for VM smoke testing
+- Explicit source-on-OS target at `/opt/mnemosyne-os/source`
 
 What is still future work:
 
-- Full custom ISO build/test cycle
+- VM boot smoke-test pass/fail artifact for the generated ISO
+- Flash-ready ISO release candidate after service/API/CLI checks pass inside the VM
 - Real vector store backend
 - LLM-powered skill distillation
 - Profile isolation
@@ -39,14 +45,20 @@ mnemosyne-os/
 ├── assets/                         # Demo GIF and visual assets
 ├── bin/mnemosyne                   # Native CLI helper
 ├── dashboard/mnemosyne-panels.html # Local live dashboard
-├── docs/index.html                 # GitHub Pages site
+├── docs/
+│   ├── index.html                  # GitHub Pages site
+│   └── plans/                      # Implementation roadmaps
+├── iso/                            # live-build scaffold + ISO test docs
+├── kernel/                         # custom-kernel track docs/placeholders
 ├── mnemosyne/
 │   ├── core/memory.py              # Local memory store + graph builder
 │   ├── services/api_server.py      # FastAPI server
 │   ├── skills/store.py             # Starter skill store
 │   └── tugboat/router.py           # Declarative routing stub
+├── packaging/                      # installer + systemd unit for OS image
 ├── scripts/
 │   ├── install-local.sh            # Local dev installer
+│   ├── prepare-live-build.sh       # Copies repo source into live-build tree
 │   ├── run-dev.sh                  # Start API server
 │   ├── load-starter-content.py     # Seed memory + skills
 │   └── build-mnemosyne-os.sh       # Cubic/Ubuntu install scaffold
@@ -97,25 +109,50 @@ python bin/mnemosyne dashboard
 - `POST /skills`
 - `POST /tugboat/route`
 
-## Custom Ubuntu / Cubic path
+## Custom Linux / live-build path
 
-The practical path toward a true Mnemosyne OS ISO is Ubuntu + Cubic first, not a from-scratch distro.
+The practical path toward a true Mnemosyne OS ISO is Debian userspace first, not a custom kernel first. The current live-build config pins Debian Bookworm because Ubuntu-mode live-build on current runners tried to pull obsolete syslinux/gfxboot theme packages.
 
-Inside a Cubic chroot, after copying this repo to `/opt/mnemosyne-os`, run:
+### Local OS installer
+
+On a Debian/Ubuntu VM or chroot, install the repo into the OS image with:
 
 ```bash
-cd /opt/mnemosyne-os
-sudo ./scripts/build-mnemosyne-os.sh
+sudo ./packaging/install-mnemosyne-os.sh --source "$PWD"
 ```
 
-That script:
+That installer:
 
-- creates a non-root `mnemosyne` service user
-- installs Python dependencies in `/opt/mnemosyne-os/.venv`
+- copies the full repository source to `/opt/mnemosyne-os/source`
+- creates a virtualenv at `/opt/mnemosyne-os/.venv`
 - seeds starter memory/skills into `/var/lib/mnemosyne`
-- installs a systemd service on port `8765`
 - installs `/usr/local/bin/mnemosyne`
-- adds a desktop launcher for the dashboard
+- installs and enables `mnemosyne.service`
+- keeps the API bound to `127.0.0.1:8765`
+
+### live-build ISO scaffold
+
+The ISO scaffold lives under `iso/live-build/`. On a Linux build host:
+
+```bash
+./scripts/prepare-live-build.sh
+cd iso/live-build
+sudo lb clean --purge || true
+sudo bash auto/config
+sudo lb build
+sha256sum live-image-amd64.hybrid.iso > live-image-amd64.hybrid.iso.sha256
+```
+
+Then follow `iso/README.md` for QEMU smoke testing and flash guidance.
+
+### Cubic compatibility
+
+Inside a Cubic chroot, after copying this repo to `/opt/mnemosyne-os/source`, run:
+
+```bash
+cd /opt/mnemosyne-os/source
+sudo ./scripts/build-mnemosyne-os.sh
+```
 
 ## Security note
 

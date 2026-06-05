@@ -4,3 +4,14 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .DS_Store
+iso/live-build/.build/
+iso/live-build/binary/
+iso/live-build/cache/
+iso/live-build/chroot/
+iso/live-build/local/
+iso/live-build/live-image-*.iso
+iso/live-build/*.img
+iso/live-build/*.contents
+iso/live-build/*.packages
+iso/live-build/*.sha256
+iso/live-build/config/includes.chroot/

@@ -1,0 +1,22 @@
+#!/bin/sh
+set -eu
+
+echo "[mnemosyne] Installing Mnemosyne OS userspace into live image"
+
+SOURCE_DIR=/opt/mnemosyne-os/source
+mkdir -p "$SOURCE_DIR"
+
+# live-build runs hooks in the chroot. The source tree is copied into
+# config/includes.chroot/opt/mnemosyne-os/source by scripts/prepare-live-build.sh.
+if [ ! -f "$SOURCE_DIR/packaging/install-mnemosyne-os.sh" ]; then
+  echo "Missing Mnemosyne source at $SOURCE_DIR" >&2
+  echo "Run scripts/prepare-live-build.sh before lb build." >&2
+  exit 1
+fi
+
+chmod +x "$SOURCE_DIR/packaging/install-mnemosyne-os.sh"
+"$SOURCE_DIR/packaging/install-mnemosyne-os.sh" --source "$SOURCE_DIR"
+
+systemctl enable mnemosyne.service || true
+
+echo "[mnemosyne] Install hook complete: mnemosyne.service enabled"

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+lb config noauto \
+  --mode debian \
+  --distribution bookworm \
+  --archive-areas "main contrib non-free-firmware" \
+  --binary-images iso-hybrid \
+  --debian-installer false \
+  --security false \
+  --linux-packages linux-image \
+  "${@}"

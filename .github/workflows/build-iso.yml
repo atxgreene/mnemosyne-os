@@ -1,0 +1,94 @@
+name: Build Mnemosyne OS ISO
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/os-iso-foundation
+    paths:
+      - '.github/workflows/build-iso.yml'
+      - 'bin/**'
+      - 'dashboard/**'
+      - 'iso/**'
+      - 'mnemosyne/**'
+      - 'packaging/**'
+      - 'scripts/**'
+      - 'seed/**'
+      - 'tests/**'
+      - 'requirements.txt'
+      - 'README.md'
+
+jobs:
+  build-iso:
+    name: Build live ISO
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Run test suite before ISO build
+        run: python -m pytest tests -q
+
+      - name: Prepare live-build source include
+        run: bash ./scripts/prepare-live-build.sh
+
+      - name: Build hybrid ISO in Debian live-build container
+        run: |
+          docker run --privileged --rm \
+            -v "${{ github.workspace }}:/workspace" \
+            -w /workspace/iso/live-build \
+            debian:bookworm \
+            bash -lc '
+              set -euxo pipefail
+              apt-get update
+              apt-get install -y --no-install-recommends \
+                live-build \
+                xorriso \
+                isolinux \
+                syslinux-utils \
+                squashfs-tools \
+                ca-certificates
+              lb clean --purge || true
+              bash auto/config
+              lb build
+              test -f live-image-amd64.hybrid.iso
+              sha256sum live-image-amd64.hybrid.iso | tee live-image-amd64.hybrid.iso.sha256
+              ls -lh live-image-amd64.hybrid.iso live-image-amd64.hybrid.iso.sha256
+            '
+
+      - name: QEMU smoke-test ISO
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system-x86 xorriso
+          MNEMOSYNE_QEMU_TIMEOUT_SECONDS=1200 bash ./scripts/smoke-test-iso-qemu.sh iso/live-build/live-image-amd64.hybrid.iso
+
+      - name: Upload QEMU serial log on smoke failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mnemosyne-qemu-smoke-serial-log
+          path: qemu-smoke-serial.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mnemosyne-os-live-image
+          path: |
+            iso/live-build/live-image-amd64.hybrid.iso
+            iso/live-build/live-image-amd64.hybrid.iso.sha256
+          if-no-files-found: error
+          retention-days: 7
