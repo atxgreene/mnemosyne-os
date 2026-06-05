@@ -61,7 +61,7 @@ jobs:
         working-directory: iso/live-build
         run: |
           sudo lb clean --purge || true
-          sudo lb config
+          sudo bash auto/config
           sudo lb build
           test -f live-image-amd64.hybrid.iso
           sha256sum live-image-amd64.hybrid.iso | tee live-image-amd64.hybrid.iso.sha256

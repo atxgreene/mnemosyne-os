@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+lb config noauto \
+  --mode ubuntu \
+  --distribution noble \
+  --archive-areas "main universe" \
+  --binary-images iso-hybrid \
+  --debian-installer false \
+  "${@}"
