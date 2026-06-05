@@ -16,6 +16,7 @@ def test_live_build_auto_config_pins_supported_debian_release():
         "--binary-images iso-hybrid",
         "--debian-installer false",
         "--security false",
+        "--linux-packages linux-image-amd64",
     ]:
         assert required in text
 
