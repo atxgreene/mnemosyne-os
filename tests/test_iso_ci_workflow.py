@@ -15,6 +15,7 @@ def test_live_build_auto_config_pins_supported_debian_release():
         "--archive-areas \"main contrib non-free-firmware\"",
         "--binary-images iso-hybrid",
         "--debian-installer false",
+        "--security false",
     ]:
         assert required in text
 
