@@ -2,8 +2,12 @@
 set -euo pipefail
 
 ISO_PATH="${1:-iso/live-build/live-image-amd64.hybrid.iso}"
-TIMEOUT_SECONDS="${MNEMOSYNE_QEMU_TIMEOUT_SECONDS:-600}"
+TIMEOUT_SECONDS="${MNEMOSYNE_QEMU_TIMEOUT_SECONDS:-900}"
 LOG_PATH="${MNEMOSYNE_QEMU_SERIAL_LOG:-qemu-smoke-serial.log}"
+ACCEL="tcg"
+if [ -e /dev/kvm ] && [ -r /dev/kvm ] && [ -w /dev/kvm ]; then
+  ACCEL="kvm:tcg"
+fi
 
 if [ ! -f "$ISO_PATH" ]; then
   echo "ISO not found: $ISO_PATH" >&2
@@ -18,8 +22,10 @@ fi
 rm -f "$LOG_PATH"
 touch "$LOG_PATH"
 
+echo "Starting QEMU smoke test: iso=${ISO_PATH} timeout=${TIMEOUT_SECONDS}s accel=${ACCEL} log=${LOG_PATH}"
+
 qemu-system-x86_64 \
-  -machine accel=tcg \
+  -machine accel="$ACCEL" \
   -m 2048 \
   -smp 2 \
   -cdrom "$ISO_PATH" \

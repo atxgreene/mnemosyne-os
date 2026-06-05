@@ -22,7 +22,7 @@ jobs:
   build-iso:
     name: Build live ISO
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 120
 
     steps:
       - name: Check out repository
@@ -72,7 +72,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y qemu-system-x86
-          bash ./scripts/smoke-test-iso-qemu.sh iso/live-build/live-image-amd64.hybrid.iso
+          MNEMOSYNE_QEMU_TIMEOUT_SECONDS=1200 bash ./scripts/smoke-test-iso-qemu.sh iso/live-build/live-image-amd64.hybrid.iso
+
+      - name: Upload QEMU serial log on smoke failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mnemosyne-qemu-smoke-serial-log
+          path: qemu-smoke-serial.log
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4

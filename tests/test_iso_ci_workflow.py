@@ -41,7 +41,8 @@ def test_iso_build_workflow_prepares_builds_hashes_and_uploads_iso():
     for required in [
         "bash ./scripts/prepare-live-build.sh",
         "qemu-system-x86",
-        "bash ./scripts/smoke-test-iso-qemu.sh",
+        "MNEMOSYNE_QEMU_TIMEOUT_SECONDS=1200 bash ./scripts/smoke-test-iso-qemu.sh",
+        "mnemosyne-qemu-smoke-serial-log",
         "lb clean --purge || true",
         "bash auto/config",
         "lb build",
