@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -36,17 +36,17 @@ app.add_middleware(
 
 
 class MemoryAddRequest(BaseModel):
-    content: str
+    content: str = Field(min_length=1)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class RouteRequest(BaseModel):
-    goal: str
+    goal: str = Field(min_length=1)
 
 
 class SkillAddRequest(BaseModel):
-    name: str
-    description: str
+    name: str = Field(min_length=1)
+    description: str = Field(min_length=1)
     triggers: list[str] = Field(default_factory=list)
     body: str = ""
 
@@ -60,7 +60,12 @@ def health() -> dict[str, Any]:
 @app.post("/memory/add")
 def add_memory(request: MemoryAddRequest) -> dict[str, Any]:
     memory, _ = stores()
-    return memory.add_memory(request.content, request.metadata).to_dict()
+    try:
+        return memory.add_memory(request.content, request.metadata).to_dict()
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except OSError as exc:
+        raise HTTPException(status_code=500, detail=f"memory store write failed: {exc}") from exc
 
 
 @app.get("/memory/search")
@@ -73,6 +78,18 @@ def search_memory(query: str, limit: int = 8) -> list[dict[str, Any]]:
 def memory_graph() -> dict[str, Any]:
     memory, _ = stores()
     return memory.graph()
+
+
+@app.get("/memory/stats")
+def memory_stats() -> dict[str, Any]:
+    memory, _ = stores()
+    return memory.stats()
+
+
+@app.get("/stats")
+def stats() -> dict[str, Any]:
+    memory, skills = stores()
+    return {"memory": memory.stats(), "skills": len(skills.all())}
 
 
 @app.get("/skills")

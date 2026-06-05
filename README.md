@@ -106,6 +106,8 @@ python bin/mnemosyne dashboard
 - `POST /memory/add`
 - `GET /memory/search?query=...`
 - `GET /memory/graph`
+- `GET /memory/stats`
+- `GET /stats`
 - `GET /skills`
 - `POST /skills`
 - `POST /tugboat/route`
