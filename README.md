@@ -23,12 +23,14 @@ What works today:
 - Cubic-oriented Ubuntu service install script
 - OS packaging foundation with systemd installer
 - live-build ISO scaffold for a flashable Linux developer preview
+- GitHub Actions ISO build workflow on the ISO feature branch
+- Checksum-verified Debian Bookworm live ISO artifact, ready for VM smoke testing
 - Explicit source-on-OS target at `/opt/mnemosyne-os/source`
 
 What is still future work:
 
-- Verified ISO build on a Linux host
-- VM boot smoke-test pass/fail artifact
+- VM boot smoke-test pass/fail artifact for the generated ISO
+- Flash-ready ISO release candidate after service/API/CLI checks pass inside the VM
 - Real vector store backend
 - LLM-powered skill distillation
 - Profile isolation
