@@ -8,5 +8,5 @@ lb config noauto \
   --binary-images iso-hybrid \
   --debian-installer false \
   --security false \
-  --linux-packages linux-image-amd64 \
+  --linux-packages linux-image \
   "${@}"
