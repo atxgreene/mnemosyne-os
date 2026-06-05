@@ -1,0 +1,78 @@
+name: Build Mnemosyne OS ISO
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/os-iso-foundation
+    paths:
+      - '.github/workflows/build-iso.yml'
+      - 'bin/**'
+      - 'dashboard/**'
+      - 'iso/**'
+      - 'mnemosyne/**'
+      - 'packaging/**'
+      - 'scripts/**'
+      - 'seed/**'
+      - 'tests/**'
+      - 'requirements.txt'
+      - 'README.md'
+
+jobs:
+  build-iso:
+    name: Build live ISO
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Run test suite before ISO build
+        run: python -m pytest tests -q
+
+      - name: Install live-build toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            live-build \
+            qemu-system-x86 \
+            xorriso \
+            isolinux \
+            syslinux-utils \
+            squashfs-tools \
+            rsync \
+            ca-certificates
+
+      - name: Prepare live-build source include
+        run: ./scripts/prepare-live-build.sh
+
+      - name: Build hybrid ISO
+        working-directory: iso/live-build
+        run: |
+          sudo lb clean --purge || true
+          sudo lb config
+          sudo lb build
+          test -f live-image-amd64.hybrid.iso
+          sha256sum live-image-amd64.hybrid.iso | tee live-image-amd64.hybrid.iso.sha256
+          ls -lh live-image-amd64.hybrid.iso live-image-amd64.hybrid.iso.sha256
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mnemosyne-os-live-image
+          path: |
+            iso/live-build/live-image-amd64.hybrid.iso
+            iso/live-build/live-image-amd64.hybrid.iso.sha256
+          if-no-files-found: error
+          retention-days: 7
