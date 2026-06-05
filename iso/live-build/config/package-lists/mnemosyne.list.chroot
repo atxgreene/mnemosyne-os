@@ -1,0 +1,9 @@
+# Build-time and runtime packages for Mnemosyne OS live image.
+live-build
+python3
+python3-venv
+python3-pip
+curl
+rsync
+ca-certificates
+systemd
