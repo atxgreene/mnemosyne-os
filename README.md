@@ -107,9 +107,9 @@ python bin/mnemosyne dashboard
 - `POST /skills`
 - `POST /tugboat/route`
 
-## Custom Ubuntu / Cubic path
+## Custom Linux / live-build path
 
-The practical path toward a true Mnemosyne OS ISO is Ubuntu/Debian userspace first, not a custom kernel first.
+The practical path toward a true Mnemosyne OS ISO is Debian userspace first, not a custom kernel first. The current live-build config pins Debian Bookworm because Ubuntu-mode live-build on current runners tried to pull obsolete syslinux/gfxboot theme packages.
 
 ### Local OS installer
 
@@ -136,7 +136,7 @@ The ISO scaffold lives under `iso/live-build/`. On a Linux build host:
 ./scripts/prepare-live-build.sh
 cd iso/live-build
 sudo lb clean --purge || true
-sudo lb config
+sudo bash auto/config
 sudo lb build
 sha256sum live-image-amd64.hybrid.iso > live-image-amd64.hybrid.iso.sha256
 ```

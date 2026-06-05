@@ -2,11 +2,11 @@
 
 This directory contains the first live-build scaffold for turning Mnemosyne OS into a bootable, flashable Linux ISO.
 
-The current goal is a **testable userspace ISO**, not a custom-kernel distro yet. The ISO should boot a standard Debian/Ubuntu live environment and install Mnemosyne source, service, CLI, dashboard, and seed data onto the image.
+The current goal is a **testable userspace ISO**, not a custom-kernel distro yet. The ISO should boot a standard Debian live environment and install Mnemosyne source, service, CLI, dashboard, and seed data onto the image.
 
 ## Build host requirements
 
-Use a Debian/Ubuntu machine or VM. Windows/Git Bash is fine for repo editing, but actual ISO builds should run on Linux.
+Use a Debian/Ubuntu machine or VM. Windows/Git Bash is fine for repo editing, but actual ISO builds should run on Linux. The checked-in `auto/config` currently pins Debian Bookworm for reproducible live-build output.
 
 ```bash
 sudo apt-get update
@@ -18,7 +18,7 @@ sudo apt-get install -y live-build qemu-system-x86 xorriso isolinux syslinux-uti
 ```bash
 cd iso/live-build
 sudo lb clean --purge || true
-sudo lb config
+sudo bash auto/config
 sudo lb build
 sha256sum live-image-amd64.hybrid.iso > live-image-amd64.hybrid.iso.sha256
 ```
@@ -86,4 +86,4 @@ Replace `/dev/sdX` with the actual USB device. This is destructive.
 
 ## Next testing milestone
 
-Run the build on an Ubuntu VM, then attach the ISO to QEMU and verify the commands above. Once that passes, record the ISO hash and promote the artifact as a v0.2 developer-preview candidate.
+Run the build on a Debian/Ubuntu VM, then attach the ISO to QEMU and verify the commands above. Once that passes, record the ISO hash and promote the artifact as a v0.2 developer-preview candidate.

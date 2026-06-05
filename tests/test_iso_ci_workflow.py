@@ -5,14 +5,14 @@ ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github" / "workflows" / "build-iso.yml"
 
 
-def test_live_build_auto_config_pins_supported_ubuntu_release():
+def test_live_build_auto_config_pins_supported_debian_release():
     auto_config = ROOT / "iso" / "live-build" / "auto" / "config"
     assert auto_config.exists()
     text = auto_config.read_text(encoding="utf-8")
     for required in [
-        "--mode ubuntu",
-        "--distribution noble",
-        "--archive-areas \"main universe\"",
+        "--mode debian",
+        "--distribution bookworm",
+        "--archive-areas \"main contrib non-free-firmware\"",
         "--binary-images iso-hybrid",
         "--debian-installer false",
     ]:

@@ -2,9 +2,9 @@
 set -euo pipefail
 
 lb config noauto \
-  --mode ubuntu \
-  --distribution noble \
-  --archive-areas "main universe" \
+  --mode debian \
+  --distribution bookworm \
+  --archive-areas "main contrib non-free-firmware" \
   --binary-images iso-hybrid \
   --debian-installer false \
   "${@}"

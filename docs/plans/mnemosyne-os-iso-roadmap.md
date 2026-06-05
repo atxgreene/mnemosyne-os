@@ -61,7 +61,7 @@ From a Debian/Ubuntu build host with live-build installed:
 ```bash
 cd iso/live-build
 sudo lb clean --purge || true
-sudo lb config
+sudo bash auto/config
 sudo lb build
 sha256sum live-image-amd64.hybrid.iso > live-image-amd64.hybrid.iso.sha256
 ```
