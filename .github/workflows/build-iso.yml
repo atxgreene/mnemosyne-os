@@ -71,7 +71,7 @@ jobs:
       - name: QEMU smoke-test ISO
         run: |
           sudo apt-get update
-          sudo apt-get install -y qemu-system-x86
+          sudo apt-get install -y qemu-system-x86 xorriso
           MNEMOSYNE_QEMU_TIMEOUT_SECONDS=1200 bash ./scripts/smoke-test-iso-qemu.sh iso/live-build/live-image-amd64.hybrid.iso
 
       - name: Upload QEMU serial log on smoke failure

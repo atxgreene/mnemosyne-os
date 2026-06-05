@@ -22,14 +22,36 @@ fi
 rm -f "$LOG_PATH"
 touch "$LOG_PATH"
 
-echo "Starting QEMU smoke test: iso=${ISO_PATH} timeout=${TIMEOUT_SECONDS}s accel=${ACCEL} log=${LOG_PATH}"
+TMPDIR="$(mktemp -d)"
+QEMU_BOOT_ARGS=(
+  -cdrom "$ISO_PATH"
+  -boot d
+)
+
+# CI display-less boots can hang silently in the ISO bootloader/menu. If xorriso
+# is available, boot the live kernel/initrd directly and pass an explicit serial
+# console while still using the ISO as the live media.
+if command -v xorriso >/dev/null 2>&1; then
+  xorriso -osirrox on -indev "$ISO_PATH" -extract /live "$TMPDIR/live" >/dev/null 2>&1 || true
+  KERNEL_PATH="$(find "$TMPDIR/live" -maxdepth 1 -type f -name 'vmlinuz*' | sort | head -n 1 || true)"
+  INITRD_PATH="$(find "$TMPDIR/live" -maxdepth 1 -type f \( -name 'initrd*' -o -name 'initrd.img*' \) | sort | head -n 1 || true)"
+  if [ -n "$KERNEL_PATH" ] && [ -n "$INITRD_PATH" ]; then
+    QEMU_BOOT_ARGS=(
+      -kernel "$KERNEL_PATH"
+      -initrd "$INITRD_PATH"
+      -append "boot=live components console=ttyS0,115200n8 quiet"
+      -cdrom "$ISO_PATH"
+    )
+  fi
+fi
+
+echo "Starting QEMU smoke test: iso=${ISO_PATH} timeout=${TIMEOUT_SECONDS}s accel=${ACCEL} log=${LOG_PATH} boot_args=${QEMU_BOOT_ARGS[*]}"
 
 qemu-system-x86_64 \
   -machine accel="$ACCEL" \
   -m 2048 \
   -smp 2 \
-  -cdrom "$ISO_PATH" \
-  -boot d \
+  "${QEMU_BOOT_ARGS[@]}" \
   -display none \
   -serial file:"$LOG_PATH" \
   -no-reboot \
@@ -38,6 +60,7 @@ qemu-system-x86_64 \
 QEMU_PID=$!
 
 cleanup() {
+  rm -rf "$TMPDIR"
   if kill -0 "$QEMU_PID" >/dev/null 2>&1; then
     kill "$QEMU_PID" >/dev/null 2>&1 || true
     wait "$QEMU_PID" >/dev/null 2>&1 || true

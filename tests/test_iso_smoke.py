@@ -24,6 +24,9 @@ def test_qemu_smoke_script_waits_for_guest_pass_marker():
     for required in [
         "qemu-system-x86_64",
         "-serial file:",
+        "xorriso",
+        "-kernel",
+        "console=ttyS0,115200n8",
         "MNEMOSYNE_ISO_SMOKE: PASS",
         "MNEMOSYNE_ISO_SMOKE: FAIL",
     ]:

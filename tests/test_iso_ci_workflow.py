@@ -40,7 +40,7 @@ def test_iso_build_workflow_prepares_builds_hashes_and_uploads_iso():
     text = WORKFLOW.read_text(encoding="utf-8")
     for required in [
         "bash ./scripts/prepare-live-build.sh",
-        "qemu-system-x86",
+        "qemu-system-x86 xorriso",
         "MNEMOSYNE_QEMU_TIMEOUT_SECONDS=1200 bash ./scripts/smoke-test-iso-qemu.sh",
         "mnemosyne-qemu-smoke-serial-log",
         "lb clean --purge || true",
