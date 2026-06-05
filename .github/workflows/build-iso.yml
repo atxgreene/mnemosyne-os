@@ -68,6 +68,12 @@ jobs:
               ls -lh live-image-amd64.hybrid.iso live-image-amd64.hybrid.iso.sha256
             '
 
+      - name: QEMU smoke-test ISO
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system-x86
+          bash ./scripts/smoke-test-iso-qemu.sh iso/live-build/live-image-amd64.hybrid.iso
+
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:

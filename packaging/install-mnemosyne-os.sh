@@ -34,6 +34,8 @@ SOURCE_DIR=/opt/mnemosyne-os/source
 VENV_DIR=/opt/mnemosyne-os/.venv
 DATA_DIR=/var/lib/mnemosyne
 SERVICE_SRC="$SOURCE_INPUT/packaging/systemd/mnemosyne.service"
+SMOKE_SERVICE_SRC="$SOURCE_INPUT/packaging/systemd/mnemosyne-iso-smoke.service"
+SMOKE_SCRIPT="$SOURCE_DIR/packaging/smoke/mnemosyne-iso-smoke.sh"
 
 if [ ! -f "$SOURCE_INPUT/requirements.txt" ] || [ ! -d "$SOURCE_INPUT/mnemosyne" ]; then
   echo "Source path does not look like mnemosyne-os: $SOURCE_INPUT" >&2
@@ -75,14 +77,23 @@ MNEMOSYNE_HOME="$DATA_DIR" "$VENV_DIR/bin/python" "$SOURCE_DIR/scripts/load-star
 ln -sf "$SOURCE_DIR/bin/mnemosyne" /usr/local/bin/mnemosyne
 chmod +x "$SOURCE_DIR/bin/mnemosyne"
 chmod +x "$SOURCE_DIR/scripts"/*.sh
+if [ -f "$SMOKE_SCRIPT" ]; then
+  chmod +x "$SMOKE_SCRIPT"
+fi
 
 install -D -m 0644 "$SERVICE_SRC" /etc/systemd/system/mnemosyne.service
+if [ -f "$SMOKE_SERVICE_SRC" ]; then
+  install -D -m 0644 "$SMOKE_SERVICE_SRC" /etc/systemd/system/mnemosyne-iso-smoke.service
+fi
 chown -R mnemosyne:mnemosyne "$DATA_DIR"
 chown -R root:root /opt/mnemosyne-os
 
 systemctl daemon-reload
 if [ "$ENABLE_SERVICE" -eq 1 ]; then
   systemctl enable mnemosyne.service
+  if [ -f /etc/systemd/system/mnemosyne-iso-smoke.service ]; then
+    systemctl enable mnemosyne-iso-smoke.service || true
+  fi
   systemctl restart mnemosyne.service || true
 fi
 

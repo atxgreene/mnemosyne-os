@@ -1,0 +1,14 @@
+[Unit]
+Description=Mnemosyne ISO boot smoke test marker
+After=mnemosyne.service network-online.target
+Wants=mnemosyne.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/mnemosyne-os/source/packaging/smoke/mnemosyne-iso-smoke.sh
+RemainAfterExit=yes
+StandardOutput=journal+console
+StandardError=journal+console
+
+[Install]
+WantedBy=multi-user.target

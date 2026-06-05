@@ -40,6 +40,8 @@ def test_iso_build_workflow_prepares_builds_hashes_and_uploads_iso():
     text = WORKFLOW.read_text(encoding="utf-8")
     for required in [
         "bash ./scripts/prepare-live-build.sh",
+        "qemu-system-x86",
+        "bash ./scripts/smoke-test-iso-qemu.sh",
         "lb clean --purge || true",
         "bash auto/config",
         "lb build",
