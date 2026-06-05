@@ -21,12 +21,13 @@ def test_live_build_auto_config_pins_supported_debian_release():
         assert required in text
 
 
-def test_iso_build_workflow_exists_and_installs_live_build_toolchain():
+def test_iso_build_workflow_exists_and_builds_inside_debian_container():
     assert WORKFLOW.exists(), "GitHub Actions ISO build workflow should exist"
     text = WORKFLOW.read_text(encoding="utf-8")
     for required in [
+        "docker run --privileged --rm",
+        "debian:bookworm",
         "live-build",
-        "qemu-system-x86",
         "xorriso",
         "isolinux",
         "syslinux-utils",
@@ -39,9 +40,9 @@ def test_iso_build_workflow_prepares_builds_hashes_and_uploads_iso():
     text = WORKFLOW.read_text(encoding="utf-8")
     for required in [
         "bash ./scripts/prepare-live-build.sh",
-        "sudo lb clean --purge || true",
-        "sudo bash auto/config",
-        "sudo lb build",
+        "lb clean --purge || true",
+        "bash auto/config",
+        "lb build",
         "sha256sum live-image-amd64.hybrid.iso",
         "actions/upload-artifact",
         "live-image-amd64.hybrid.iso",
