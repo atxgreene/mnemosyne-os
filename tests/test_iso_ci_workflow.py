@@ -62,6 +62,8 @@ def test_iso_build_workflow_runs_existing_test_suite_first():
 def test_iso_build_workflow_can_publish_tagged_developer_preview_release():
     text = WORKFLOW.read_text(encoding="utf-8")
     for required in [
+        "pull_request:",
+        "branches:",
         "tags:",
         "- 'v*'",
         "permissions:",
