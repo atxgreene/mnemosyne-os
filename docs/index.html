@@ -21,15 +21,15 @@
   </nav>
 
   <section class="max-w-5xl mx-auto px-6 pt-16 pb-12 text-center">
-    <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/5 border border-white/10 mb-6 text-sm"><span class="w-2 h-2 bg-[#f4d35e] rounded-full animate-pulse"></span><span class="text-[#f4d35e]">Runnable v0.1 scaffold</span></div>
+    <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/5 border border-white/10 mb-6 text-sm"><span class="w-2 h-2 bg-[#f4d35e] rounded-full animate-pulse"></span><span class="text-[#f4d35e]">Local core ready • ISO experimental</span></div>
     <h1 class="title text-6xl md:text-7xl font-semibold tracking-tighter mb-5">Memory Awakens.<br><span class="text-[#f4d35e]">The Stars Await.</span></h1>
-    <p class="max-w-2xl mx-auto text-xl text-white/70 mb-8">A local-first cognitive OS foundation: Mnemosyne memory, Tugboat routing, native CLI, FastAPI server, and an Obsidian-style graph interface.</p>
+    <p class="max-w-2xl mx-auto text-xl text-white/70 mb-8">A local-first cognitive-core scaffold you can run today, with an experimental Debian live ISO path that now builds and passes QEMU smoke testing on main.</p>
     <div class="flex justify-center gap-4 flex-wrap"><a href="https://github.com/atxgreene/mnemosyne-os" class="px-7 py-4 bg-[#f4d35e] text-[#0a0814] rounded-3xl font-bold">Clone the Repo</a><a href="#demo" class="px-7 py-4 bg-white/5 border border-white/10 rounded-3xl">See Demo</a></div>
   </section>
 
   <section id="status" class="max-w-6xl mx-auto px-6 pb-12 grid md:grid-cols-3 gap-5">
-    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Runnable v0.1 Core</h3><p class="text-white/65">FastAPI backend, JSONL memory, native CLI, Tugboat routing stub, skills store, and local dashboard are available today.</p></div>
-    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">ISO Track on Main</h3><p class="text-white/65">Debian Bookworm live-build workflow now builds a hybrid ISO artifact with checksum verification in GitHub Actions.</p></div>
+    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">Local Core v0.1</h3><p class="text-white/65">Usable for local/development workflows: FastAPI, JSONL memory, CLI, skills, Tugboat stub, stats, and live local dashboard.</p></div>
+    <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">ISO Experimental</h3><p class="text-white/65">Main builds a Debian Bookworm hybrid ISO and uploads checksumed artifacts; hardware USB boot remains a future gate.</p></div>
     <div class="glass rounded-3xl p-6"><h3 class="title text-2xl text-[#f4d35e]">QEMU Smoke Verified</h3><p class="text-white/65">CI boots the live image and verifies mnemosyne.service, the /health endpoint, and CLI search inside the VM.</p></div>
   </section>
 
@@ -61,7 +61,7 @@ python bin/mnemosyne route "Synthesize cognitive OS design" --json</code></pre><
   </section>
 
 <script>
-const graphData={nodes:[{id:1,label:'Mnemosyne',group:'memory'},{id:2,label:'Tugboat',group:'routing'},{id:3,label:'Skills',group:'skills'},{id:4,label:'Security Guardian',group:'security'},{id:5,label:'Memory Graph',group:'memory'},{id:6,label:'Ubuntu ISO',group:'os'},{id:7,label:'CLI',group:'tooling'},{id:8,label:'Dashboard',group:'tooling'}],edges:[{from:1,to:2},{from:1,to:5},{from:2,to:3},{from:2,to:4},{from:5,to:8},{from:7,to:1},{from:6,to:1},{from:8,to:2},{from:3,to:4}]};
+const graphData={nodes:[{id:1,label:'Mnemosyne',group:'memory'},{id:2,label:'Tugboat',group:'routing'},{id:3,label:'Skills',group:'skills'},{id:4,label:'Security Guardian',group:'security'},{id:5,label:'Memory Graph',group:'memory'},{id:6,label:'Debian ISO',group:'os'},{id:7,label:'CLI',group:'tooling'},{id:8,label:'Dashboard',group:'tooling'}],edges:[{from:1,to:2},{from:1,to:5},{from:2,to:3},{from:2,to:4},{from:5,to:8},{from:7,to:1},{from:6,to:1},{from:8,to:2},{from:3,to:4}]};
 function regenerateGraph(){const colors={memory:'#f4d35e',routing:'#6fb9f0',skills:'#8eee98',security:'#ff93b2',os:'#cb86db',tooling:'#fb6f5f'}; const nodes=new vis.DataSet(graphData.nodes.map(n=>({...n,color:colors[n.group],font:{color:'#fff'},borderWidth:0,shape:'dot',size:22+Math.random()*10}))); const edges=new vis.DataSet(graphData.edges.map(e=>({...e,color:{color:'rgba(255,255,255,.22)'},width:1+Math.random()*2}))); new vis.Network(document.getElementById('live-graph'),{nodes,edges},{physics:{stabilization:false,barnesHut:{gravitationalConstant:-5000,springLength:150}},interaction:{hover:true},nodes:{shadow:true},edges:{smooth:true}});} regenerateGraph();
 </script>
 </body>

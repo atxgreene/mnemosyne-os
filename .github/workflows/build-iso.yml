@@ -53,7 +53,7 @@ jobs:
           docker run --privileged --rm \
             -v "${{ github.workspace }}:/workspace" \
             -w /workspace/iso/live-build \
-            debian:bookworm \
+            debian:bookworm-20260518@sha256:ed4fcc40bb1162b6d2d32e7bec15044d13963779abbe63f67f1cd62b06220519 \
             bash -lc '
               set -euxo pipefail
               apt-get update

@@ -1,37 +1,29 @@
 # Mnemosyne OS
 
-**A local-first cognitive operating-system scaffold with Mnemosyne as the living memory core, Tugboat as the routing layer, and an Obsidian-style memory graph as the primary interface.**
+**A local-first cognitive-core project that currently ships as a Python app plus an experimental Debian live ISO path. Mnemosyne is the living memory core, Tugboat is the routing layer, and an Obsidian-style graph is the primary interface.**
 
 > Stellas Hereditabimus — we will inherit the stars.
 
-## Current status
+## Current maturity (June 2026)
 
-This repository is now a real **v0.1 runnable scaffold**, not just a concept page.
+This repository is now a real **v0.1 runnable local scaffold**, not just a concept page.
 
-What works today:
+- **Local Core (v0.1): usable for local/development workflows.** It provides a FastAPI server, JSONL memory, search, stats, graph data, Tugboat routing stub, skills store, CLI, and local dashboard.
+- **ISO Distribution: experimental developer preview.** `main` builds a Debian Bookworm hybrid ISO in GitHub Actions and uploads checksumed artifacts. CI boots the ISO in QEMU and verifies `mnemosyne.service`, `/health`, and CLI search inside the VM.
+- **Not production-ready yet.** There is no auth, no durable ISO persistence story, no bundled offline LLM, and no hardware USB boot certification.
 
-- Local JSONL memory store
-- Memory search
-- Live memory graph endpoint
-- Starter skills store
-- Tugboat routing stub
-- FastAPI cognitive-core server
-- Native `mnemosyne` CLI helper
-- Local dashboard that talks to the API
-- Starter memory + starter skills seed files
-- GitHub Pages concept/demo site
-- Cubic-oriented Ubuntu service install script
-- OS packaging foundation with systemd installer
-- live-build ISO scaffold for a flashable Linux developer preview
-- GitHub Actions ISO build workflow on `main`
-- Checksum-verified Debian Bookworm live ISO artifact
-- CI QEMU smoke test that verifies boot, `mnemosyne.service`, `/health`, and CLI search inside the live VM
-- Explicit source-on-OS target at `/opt/mnemosyne-os/source`
+What you can actually use today:
+
+- Install and run the local cognitive core with `scripts/install-local.sh` and `scripts/run-dev.sh`.
+- Store/search memories with `python bin/mnemosyne`.
+- Open the local dashboard wired to `GET /memory/graph`.
+- Inspect GitHub Actions artifacts from the `Build Mnemosyne OS ISO` workflow for the latest experimental ISO and checksum.
 
 What is still future work:
 
 - Published/release-tagged ISO download
 - Hardware USB boot testing beyond QEMU
+- Persistent writable memory volume in the live ISO
 - Real vector store backend
 - LLM-powered skill distillation
 - Profile isolation
@@ -106,8 +98,8 @@ python bin/mnemosyne dashboard
 - `POST /memory/add`
 - `GET /memory/search?query=...`
 - `GET /memory/graph`
-- `GET /memory/stats`
-- `GET /stats`
+- `GET /memory/stats` — memory-only counts and domains
+- `GET /stats` — aggregate service stats across memory and skills
 - `GET /skills`
 - `POST /skills`
 - `POST /tugboat/route`
@@ -120,9 +112,22 @@ python bin/mnemosyne dashboard
 - QEMU smoke testing passes in CI, but hardware USB boot testing is still a separate gate.
 - Security Guardian enforcement is not active beyond early routing/design hints.
 
-## Custom Linux / live-build path
+## Distribution / live-build path
 
-The practical path toward a true Mnemosyne OS ISO is Debian userspace first, not a custom kernel first. The current live-build config pins Debian Bookworm because Ubuntu-mode live-build on current runners tried to pull obsolete syslinux/gfxboot theme packages.
+The active distribution path is Debian Bookworm userspace via live-build, not a custom kernel-first distro and not the older Cubic-first Ubuntu path. The workflow at `.github/workflows/build-iso.yml` builds the ISO on `main`, produces checksumed artifacts, and runs the QEMU smoke test automatically.
+
+### GitHub Actions ISO build
+
+The `Build Mnemosyne OS ISO` workflow verifies the distribution path by:
+
+1. running the Python test suite,
+2. preparing the live-build source include,
+3. building `live-image-amd64.hybrid.iso` in a pinned Debian Bookworm container,
+4. writing `live-image-amd64.hybrid.iso.sha256`,
+5. booting the ISO in QEMU, and
+6. checking `mnemosyne.service`, `curl http://127.0.0.1:8765/health`, and CLI search inside the live VM.
+
+Artifacts are retained by GitHub Actions for short-term inspection.
 
 ### Local OS installer
 
@@ -156,14 +161,9 @@ sha256sum live-image-amd64.hybrid.iso > live-image-amd64.hybrid.iso.sha256
 
 Then follow `iso/README.md` for QEMU smoke testing and flash guidance.
 
-### Cubic compatibility
+### Legacy Cubic compatibility
 
-Inside a Cubic chroot, after copying this repo to `/opt/mnemosyne-os/source`, run:
-
-```bash
-cd /opt/mnemosyne-os/source
-sudo ./scripts/build-mnemosyne-os.sh
-```
+`scripts/build-mnemosyne-os.sh` remains as a compatibility helper for old Cubic/Ubuntu experiments. New distribution work should use the Debian live-build path above.
 
 ## Security note
 

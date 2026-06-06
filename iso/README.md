@@ -1,6 +1,6 @@
 # Mnemosyne OS ISO Foundation
 
-This directory contains the first live-build scaffold for turning Mnemosyne OS into a bootable, flashable Linux ISO.
+This directory contains the active live-build scaffold for producing the experimental Mnemosyne OS Debian developer-preview ISO.
 
 The current goal is a **testable userspace ISO**, not a custom-kernel distro yet. The ISO should boot a standard Debian live environment and install Mnemosyne source, service, CLI, dashboard, and seed data onto the image.
 
@@ -63,6 +63,16 @@ Expected:
 - `mnemosyne.service` starts the FastAPI server.
 - API binds to `127.0.0.1:8765`, not a public interface.
 
+## CI smoke-test evidence
+
+On `main`, the `Build Mnemosyne OS ISO` GitHub Actions workflow builds the ISO, uploads `live-image-amd64.hybrid.iso` plus its `.sha256`, boots the ISO in QEMU, and verifies:
+
+- `mnemosyne.service` is active,
+- `curl http://127.0.0.1:8765/health` responds,
+- `mnemosyne search Mnemosyne --json` works inside the live VM.
+
+Manual QEMU testing is still useful before flashing hardware, but the basic VM smoke gate now runs automatically in CI.
+
 ## Flashing
 
 Flash only after the VM boot smoke test passes and the checksum is recorded.
@@ -78,12 +88,12 @@ Replace `/dev/sdX` with the actual USB device. This is destructive.
 
 ## Current limitations
 
-- This is a scaffold for Linux-host testing; it has not yet produced a verified ISO in this repo.
-- Persistence is not configured yet.
+- The CI workflow produces a QEMU-verified ISO artifact, but there is no long-lived release artifact yet.
+- Persistence is not configured yet; live-session memories may be ephemeral unless the deployment provides a writable volume.
 - No custom kernel is built yet.
 - No bundled local LLM is included yet.
 - API auth is not implemented; keep the service localhost-only.
 
 ## Next testing milestone
 
-Run the build on a Debian/Ubuntu VM, then attach the ISO to QEMU and verify the commands above. Once that passes, record the ISO hash and promote the artifact as a v0.2 developer-preview candidate.
+Promote a green CI artifact into a tagged developer-preview release, then perform hardware USB boot testing and document persistence behavior across reboots.
