@@ -57,3 +57,21 @@ def test_iso_build_workflow_prepares_builds_hashes_and_uploads_iso():
 def test_iso_build_workflow_runs_existing_test_suite_first():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "python -m pytest tests -q" in text
+
+
+def test_iso_build_workflow_can_publish_tagged_developer_preview_release():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    for required in [
+        "pull_request:",
+        "branches:",
+        "tags:",
+        "- 'v*'",
+        "permissions:",
+        "contents: write",
+        "Publish tagged developer-preview release",
+        "startsWith(github.ref, 'refs/tags/v')",
+        "gh release create",
+        "--prerelease",
+        "live-image-amd64.hybrid.iso.sha256",
+    ]:
+        assert required in text
