@@ -88,12 +88,25 @@ Replace `/dev/sdX` with the actual USB device. This is destructive.
 
 ## Current limitations
 
-- The CI workflow produces a QEMU-verified ISO artifact, but there is no long-lived release artifact yet.
+- The CI workflow produces a QEMU-verified ISO artifact. Tagged `v*` builds publish the ISO and checksum to a GitHub prerelease for longer-lived developer-preview downloads.
 - Persistence is not configured yet; live-session memories may be ephemeral unless the deployment provides a writable volume.
 - No custom kernel is built yet.
 - No bundled local LLM is included yet.
 - API auth is not implemented; keep the service localhost-only.
 
+## Developer-preview release
+
+The ISO workflow supports tagged prereleases. After `main` is green and the current docs accurately describe the maturity level:
+
+```bash
+git checkout main
+git pull origin main
+git tag -a v0.1.0-dev.1 -m "Mnemosyne OS v0.1.0 developer preview 1"
+git push origin v0.1.0-dev.1
+```
+
+A `v*` tag triggers the same ISO build and QEMU smoke gate. If those pass, GitHub Actions publishes `live-image-amd64.hybrid.iso` and `live-image-amd64.hybrid.iso.sha256` to a prerelease. Treat that release as a developer preview, not a production OS image.
+
 ## Next testing milestone
 
-Promote a green CI artifact into a tagged developer-preview release, then perform hardware USB boot testing and document persistence behavior across reboots.
+Publish the first tagged developer-preview release, then perform hardware USB boot testing and document persistence behavior across reboots.

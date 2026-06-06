@@ -9,6 +9,8 @@ on:
     branches:
       - main
       - feat/os-iso-foundation
+    tags:
+      - 'v*'
     paths:
       - '.github/workflows/build-iso.yml'
       - 'bin/**'
@@ -21,6 +23,9 @@ on:
       - 'tests/**'
       - 'requirements.txt'
       - 'README.md'
+
+permissions:
+  contents: write
 
 jobs:
   build-iso:
@@ -96,3 +101,15 @@ jobs:
             iso/live-build/live-image-amd64.hybrid.iso.sha256
           if-no-files-found: error
           retention-days: 7
+
+      - name: Publish tagged developer-preview release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            iso/live-build/live-image-amd64.hybrid.iso \
+            iso/live-build/live-image-amd64.hybrid.iso.sha256 \
+            --title "Mnemosyne OS ${GITHUB_REF_NAME}" \
+            --notes "Developer-preview ISO built from ${GITHUB_SHA}. CI built the Debian Bookworm live image, generated checksums, and passed the QEMU smoke test before publishing. This is experimental: no hardware USB certification, no live persistence guarantee, no bundled offline LLM, and no API auth." \
+            --prerelease

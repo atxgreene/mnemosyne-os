@@ -127,7 +127,20 @@ The `Build Mnemosyne OS ISO` workflow verifies the distribution path by:
 5. booting the ISO in QEMU, and
 6. checking `mnemosyne.service`, `curl http://127.0.0.1:8765/health`, and CLI search inside the live VM.
 
-Artifacts are retained by GitHub Actions for short-term inspection.
+Artifacts are retained by GitHub Actions for short-term inspection. For a longer-lived developer-preview artifact, push a reviewed `v*` tag; the same workflow rebuilds the ISO, reruns QEMU smoke testing, and publishes the ISO plus `.sha256` to a GitHub prerelease.
+
+### Tagged developer-preview release
+
+Use this only after `main` is green and the README/Pages status still matches the artifact maturity:
+
+```bash
+git checkout main
+git pull origin main
+git tag -a v0.1.0-dev.1 -m "Mnemosyne OS v0.1.0 developer preview 1"
+git push origin v0.1.0-dev.1
+```
+
+The tag workflow publishes a prerelease only after the same build, checksum, and QEMU smoke gates pass. Do not call the release production-ready until hardware USB boot testing and persistence behavior are documented.
 
 ### Local OS installer
 
