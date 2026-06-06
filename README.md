@@ -54,7 +54,7 @@ mnemosyne-os/
 │   ├── prepare-live-build.sh       # Copies repo source into live-build tree
 │   ├── run-dev.sh                  # Start API server
 │   ├── load-starter-content.py     # Seed memory + skills
-│   └── build-mnemosyne-os.sh       # Cubic/Ubuntu install scaffold
+│   └── build-mnemosyne-os.sh       # Legacy Cubic/Ubuntu helper
 ├── seed/                           # Starter memories and skills
 ├── tests/                          # Pytest suite
 ├── LICENSE
