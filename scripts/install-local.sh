@@ -8,7 +8,7 @@ if [ ! -d ".venv" ]; then
 fi
 
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install --require-hashes -r requirements.txt
 
 mkdir -p data
 

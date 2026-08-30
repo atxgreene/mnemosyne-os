@@ -6,11 +6,15 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from mnemosyne.core.memory import MemoryStore
 from mnemosyne.skills.store import SkillStore
 from mnemosyne.tugboat.router import TugboatRouter
+
+
+DASHBOARD_PATH = Path(__file__).resolve().parents[2] / "dashboard" / "mnemosyne-panels.html"
 
 
 def mnemosyne_home() -> Path:
@@ -26,12 +30,17 @@ def stores() -> tuple[MemoryStore, SkillStore]:
 
 
 app = FastAPI(title="Mnemosyne OS Cognitive Core", version="0.1.0")
+# The API is loopback-only, and its browser client is the local dashboard.
+# Exact origins prevent arbitrary websites from reading or mutating local data.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://127.0.0.1:8765",
+        "http://localhost:8765",
+    ],
     allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
 )
 
 
@@ -49,6 +58,11 @@ class SkillAddRequest(BaseModel):
     description: str = Field(min_length=1)
     triggers: list[str] = Field(default_factory=list)
     body: str = ""
+
+
+@app.get("/dashboard", include_in_schema=False)
+def dashboard() -> FileResponse:
+    return FileResponse(DASHBOARD_PATH)
 
 
 @app.get("/health")

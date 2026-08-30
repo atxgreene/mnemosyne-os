@@ -89,12 +89,12 @@ def main() -> int:
         return 0
 
     if args.command == "dashboard":
-        webbrowser.open((ROOT / "dashboard" / "mnemosyne-panels.html").resolve().as_uri())
+        webbrowser.open("http://127.0.0.1:8765/dashboard")
         print("opened dashboard")
         return 0
 
     if args.command == "serve":
-        return subprocess.call([sys.executable, "-m", "uvicorn", "mnemosyne.services.api_server:app", "--host", "0.0.0.0", "--port", "8765"], cwd=ROOT)
+        return subprocess.call([sys.executable, "-m", "uvicorn", "mnemosyne.services.api_server:app", "--host", "127.0.0.1", "--port", "8765"], cwd=ROOT)
 
     return 1
 
