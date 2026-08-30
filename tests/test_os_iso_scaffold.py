@@ -1,4 +1,5 @@
 from pathlib import Path
+import stat
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -31,22 +32,39 @@ def test_packaging_installer_copies_source_and_installs_cli():
     assert "load-starter-content.py" in installer
     assert "mnemosyne.service" in installer
     assert "skipping self-rsync" in installer
+    assert "--exclude '.venv*/'" in installer
 
 
-def test_prepare_live_build_excludes_generated_include_tree():
+def test_prepare_live_build_excludes_generated_include_tree_and_local_venvs():
     prepare = read("scripts/prepare-live-build.sh")
+    ignore = read(".gitignore")
     assert "config/includes.chroot/opt/mnemosyne-os/source" in prepare
     assert "--exclude 'iso/live-build/config/includes.chroot/'" in prepare
+    assert "--exclude '.venv*/'" in prepare
+    assert ".venv*/" in ignore
 
 
 def test_live_build_hooks_include_source_and_service():
-    hook = read("iso/live-build/config/hooks/normal/010-install-mnemosyne.hook.chroot")
+    hook_path = ROOT / "iso/live-build/config/hooks/normal/010-install-mnemosyne.hook.chroot"
+    hook = hook_path.read_text(encoding="utf-8")
     package_list = read("iso/live-build/config/package-lists/mnemosyne.list.chroot")
+    assert hook_path.stat().st_mode & stat.S_IXUSR
     assert "/opt/mnemosyne-os/source" in hook
     assert "install-mnemosyne-os.sh" in hook
     assert "mnemosyne.service" in hook
     assert "live-build" in package_list
     assert "python3-venv" in package_list
+
+
+def test_docs_do_not_advertise_an_empty_demo_asset():
+    docs_index = read("docs/index.html")
+    demo_asset = ROOT / "assets" / "mnemosyne_os_demo.gif"
+
+    if "mnemosyne_os_demo.gif" in docs_index:
+        assert demo_asset.exists(), "referenced demo asset must exist"
+        assert demo_asset.stat().st_size > 0, "referenced demo asset must not be empty"
+    else:
+        assert not demo_asset.exists(), "unreferenced empty placeholder should be removed"
 
 
 def test_iso_readme_has_build_and_flash_testing_commands():

@@ -59,7 +59,7 @@ mkdir -p /opt/mnemosyne-os "$DATA_DIR"
 if [ "$SOURCE_INPUT" != "$SOURCE_DIR" ]; then
   rsync -a --delete \
     --exclude '.git/' \
-    --exclude '.venv/' \
+    --exclude '.venv*/' \
     --exclude '.pytest_cache/' \
     --exclude '__pycache__/' \
     --exclude '.tmp-mnemosyne/' \
@@ -69,8 +69,7 @@ else
 fi
 
 python3 -m venv "$VENV_DIR"
-"$VENV_DIR/bin/pip" install --upgrade pip
-"$VENV_DIR/bin/pip" install -r "$SOURCE_DIR/requirements.txt"
+"$VENV_DIR/bin/pip" install --require-hashes -r "$SOURCE_DIR/requirements.txt"
 
 MNEMOSYNE_HOME="$DATA_DIR" "$VENV_DIR/bin/python" "$SOURCE_DIR/scripts/load-starter-content.py"
 

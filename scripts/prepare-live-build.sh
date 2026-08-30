@@ -10,7 +10,7 @@ mkdir -p "$INCLUDE_DIR"
 
 rsync -a \
   --exclude '.git/' \
-  --exclude '.venv/' \
+  --exclude '.venv*/' \
   --exclude '.pytest_cache/' \
   --exclude '__pycache__/' \
   --exclude '.tmp-mnemosyne/' \

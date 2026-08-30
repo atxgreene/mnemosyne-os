@@ -1,8 +1,10 @@
-.venv/
+.venv*/
 .tmp-mnemosyne/
 __pycache__/
 *.pyc
 .pytest_cache/
+dist/
+release-artifacts/
 .DS_Store
 iso/live-build/.build/
 iso/live-build/binary/

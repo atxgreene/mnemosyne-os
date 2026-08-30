@@ -4,7 +4,7 @@
 
 > Stellas Hereditabimus — we will inherit the stars.
 
-## Current maturity (June 2026)
+## Current maturity (August 2026)
 
 This repository is now a real **v0.1 runnable local scaffold**, not just a concept page.
 
@@ -16,8 +16,8 @@ What you can actually use today:
 
 - Install and run the local cognitive core with `scripts/install-local.sh` and `scripts/run-dev.sh`.
 - Store/search memories with `python bin/mnemosyne`.
-- Open the local dashboard wired to `GET /memory/graph`.
-- Inspect GitHub Actions artifacts from the `Build Mnemosyne OS ISO` workflow for the latest experimental ISO and checksum.
+- Open the loopback-served dashboard wired to `GET /memory/graph`.
+- Inspect GitHub Actions artifacts from the `Build Mnemosyne OS ISO` workflow for the latest experimental ISO, checksum, and Python CycloneDX SBOM.
 
 What is still future work:
 
@@ -70,16 +70,17 @@ cd mnemosyne-os
 ./scripts/run-dev.sh
 ```
 
-Then open:
+Then open the dashboard or API docs:
 
 ```text
+http://127.0.0.1:8765/dashboard
 http://127.0.0.1:8765/docs
 ```
 
-Or open the local dashboard file:
+The dashboard is intentionally served by the loopback API rather than opened as a `file://` page. You can also launch it with:
 
-```text
-dashboard/mnemosyne-panels.html
+```bash
+python bin/mnemosyne dashboard
 ```
 
 ## CLI examples
@@ -94,6 +95,7 @@ python bin/mnemosyne dashboard
 
 ## API endpoints
 
+- `GET /dashboard` — loopback-served local dashboard
 - `GET /health`
 - `POST /memory/add`
 - `GET /memory/search?query=...`
@@ -120,14 +122,31 @@ The active distribution path is Debian Bookworm userspace via live-build, not a 
 
 The `Build Mnemosyne OS ISO` workflow verifies the distribution path by:
 
-1. running the Python test suite,
-2. preparing the live-build source include,
-3. building `live-image-amd64.hybrid.iso` in a pinned Debian Bookworm container,
-4. writing `live-image-amd64.hybrid.iso.sha256`,
-5. booting the ISO in QEMU, and
-6. checking `mnemosyne.service`, `curl http://127.0.0.1:8765/health`, and CLI search inside the live VM.
+1. installing the fully pinned Python dependency graph with required SHA-256 hashes,
+2. running the Python test suite,
+3. preparing the live-build source include,
+4. generating `mnemosyne-python-sbom.cdx.json`,
+5. building `live-image-amd64.hybrid.iso` in a digest-pinned Debian Bookworm container with Debian security updates enabled,
+6. writing `live-image-amd64.hybrid.iso.sha256`,
+7. booting the ISO in QEMU, and
+8. checking `mnemosyne.service`, `curl http://127.0.0.1:8765/health`, and CLI search inside the live VM.
 
-Artifacts are retained by GitHub Actions for short-term inspection. For a longer-lived developer-preview artifact, push a reviewed `v*` tag; the same workflow rebuilds the ISO, reruns QEMU smoke testing, and publishes the ISO plus `.sha256` to a GitHub prerelease.
+Artifacts are retained by GitHub Actions for short-term inspection. For a longer-lived developer-preview artifact, push a reviewed `v*` tag; the same workflow rebuilds the ISO, reruns QEMU smoke testing, publishes the ISO, checksum, and Python SBOM to a GitHub prerelease, and records GitHub artifact provenance attestations.
+
+### Dependency lock maintenance
+
+`requirements.in` contains the direct Python dependencies. `requirements.txt` is the reviewed, hash-locked transitive graph used by local installers, image installation, and CI. Regenerate it deliberately with Python 3.11 and pip-tools 7.5.3:
+
+```bash
+python3.11 -m venv /tmp/mnemosyne-lock
+/tmp/mnemosyne-lock/bin/pip install pip-tools==7.5.3
+/tmp/mnemosyne-lock/bin/pip-compile --generate-hashes --strip-extras --output-file requirements.txt requirements.in
+python3.11 -m venv /tmp/mnemosyne-lock-check
+/tmp/mnemosyne-lock-check/bin/pip install --require-hashes -r requirements.txt
+/tmp/mnemosyne-lock-check/bin/python -m pytest tests -q
+```
+
+Review package/version changes in the generated diff; do not hand-edit package records or hashes.
 
 ### Tagged developer-preview release
 
@@ -180,7 +199,7 @@ Then follow `iso/README.md` for QEMU smoke testing and flash guidance.
 
 ## Security note
 
-This is an early scaffold. Do **not** expose port `8765` to the public internet. The current API has no authentication. Treat it as local-only until the Security Guardian layer, auth, and audit controls are implemented.
+This is an early scaffold. Do **not** expose port `8765` to the public internet. The current API has no authentication, defaults to `127.0.0.1`, and permits browser CORS only from the local dashboard origins. Treat it as local-only until the Security Guardian layer, auth, and audit controls are implemented.
 
 ## Design priorities
 

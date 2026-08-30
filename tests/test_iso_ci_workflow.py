@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,10 +16,10 @@ def test_live_build_auto_config_pins_supported_debian_release():
         "--archive-areas \"main contrib non-free-firmware\"",
         "--binary-images iso-hybrid",
         "--debian-installer false",
-        "--security false",
         "--linux-packages linux-image",
     ]:
         assert required in text
+    assert "--security false" not in text, "Debian security updates must remain enabled"
 
 
 def test_iso_build_workflow_exists_and_builds_inside_debian_container():
@@ -34,6 +35,10 @@ def test_iso_build_workflow_exists_and_builds_inside_debian_container():
         "squashfs-tools",
     ]:
         assert required in text
+    assert re.search(
+        r"debian:bookworm-[0-9]+@sha256:[0-9a-f]{64}",
+        text,
+    ), "the Debian build container must remain pinned by an immutable digest"
 
 
 def test_iso_build_workflow_prepares_builds_hashes_and_uploads_iso():
@@ -67,6 +72,8 @@ def test_iso_build_workflow_can_publish_tagged_developer_preview_release():
         "tags:",
         "- 'v*'",
         "permissions:",
+        "contents: read",
+        "publish-release:",
         "contents: write",
         "Publish tagged developer-preview release",
         "startsWith(github.ref, 'refs/tags/v')",
@@ -75,3 +82,40 @@ def test_iso_build_workflow_can_publish_tagged_developer_preview_release():
         "live-image-amd64.hybrid.iso.sha256",
     ]:
         assert required in text
+
+
+def test_iso_build_workflow_uses_hashed_dependencies_and_immutable_actions():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert "pip install --require-hashes -r requirements.txt" in text
+    action_refs = re.findall(r"uses:\s+[^\s@]+@([^\s#]+)", text)
+    assert action_refs
+    assert all(re.fullmatch(r"[0-9a-f]{40}", ref) for ref in action_refs), action_refs
+
+
+def test_iso_build_workflow_generates_sbom_and_attests_tagged_artifacts():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    build_block, release_and_attest = text.split("  publish-release:", 1)
+    release_block, attest_block = release_and_attest.split("  attest-release:", 1)
+
+    assert "generate-python-sbom.py" in build_block
+    assert "mnemosyne-python-sbom.cdx.json" in build_block
+
+    assert "startsWith(github.ref, 'refs/tags/v')" in release_block
+    assert "mnemosyne-python-sbom.cdx.json" in release_block
+
+    assert "startsWith(github.ref, 'refs/tags/v')" in attest_block
+    assert "attest-build-provenance" in attest_block
+    assert "id-token: write" in attest_block
+    assert "attestations: write" in attest_block
+    assert "subject-path: 'release-artifacts/*'" in attest_block
+
+    for elevated_permission in ("id-token: write", "attestations: write"):
+        assert elevated_permission not in build_block
+        assert elevated_permission not in release_block
+
+
+def test_release_write_permission_is_not_granted_to_build_job():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    build_block, release_block = text.split("  publish-release:", 1)
+    assert "contents: write" not in build_block
+    assert "contents: write" in release_block

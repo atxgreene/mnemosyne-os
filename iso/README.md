@@ -6,7 +6,7 @@ The current goal is a **testable userspace ISO**, not a custom-kernel distro yet
 
 ## Build host requirements
 
-Use a Debian/Ubuntu machine or VM. Windows/Git Bash is fine for repo editing, but actual ISO builds should run on Linux. The checked-in `auto/config` currently pins Debian Bookworm for reproducible live-build output.
+Use a Debian/Ubuntu machine or VM. Windows/Git Bash is fine for repo editing, but actual ISO builds should run on Linux. The checked-in `auto/config` pins Debian Bookworm and leaves Debian's security archive enabled. The build container and Python dependency graph are pinned, but Debian archive packages are not snapshot-pinned, so the image must not yet be described as bit-for-bit reproducible.
 
 ```bash
 sudo apt-get update
@@ -65,7 +65,7 @@ Expected:
 
 ## CI smoke-test evidence
 
-On `main`, the `Build Mnemosyne OS ISO` GitHub Actions workflow builds the ISO, uploads `live-image-amd64.hybrid.iso` plus its `.sha256`, boots the ISO in QEMU, and verifies:
+On `main`, the `Build Mnemosyne OS ISO` GitHub Actions workflow installs the hash-locked Python graph, generates a Python CycloneDX SBOM, builds the ISO, uploads `live-image-amd64.hybrid.iso`, its `.sha256`, and the SBOM, boots the ISO in QEMU, and verifies:
 
 - `mnemosyne.service` is active,
 - `curl http://127.0.0.1:8765/health` responds,
@@ -88,11 +88,12 @@ Replace `/dev/sdX` with the actual USB device. This is destructive.
 
 ## Current limitations
 
-- The CI workflow produces a QEMU-verified ISO artifact. Tagged `v*` builds publish the ISO and checksum to a GitHub prerelease for longer-lived developer-preview downloads.
+- The CI workflow produces a QEMU-verified ISO artifact. Tagged `v*` builds publish the ISO, checksum, Python SBOM, and GitHub provenance attestations for longer-lived developer-preview downloads.
 - Persistence is not configured yet; live-session memories may be ephemeral unless the deployment provides a writable volume.
 - No custom kernel is built yet.
 - No bundled local LLM is included yet.
 - API auth is not implemented; keep the service localhost-only.
+- Debian's security archive is enabled in live-build configuration and protected by a regression test.
 
 ## Developer-preview release
 
@@ -105,7 +106,7 @@ git tag -a v0.1.0-dev.1 -m "Mnemosyne OS v0.1.0 developer preview 1"
 git push origin v0.1.0-dev.1
 ```
 
-A `v*` tag triggers the same ISO build and QEMU smoke gate. If those pass, GitHub Actions publishes `live-image-amd64.hybrid.iso` and `live-image-amd64.hybrid.iso.sha256` to a prerelease. Treat that release as a developer preview, not a production OS image.
+A `v*` tag triggers the same ISO build and QEMU smoke gate. If those pass, GitHub Actions publishes `live-image-amd64.hybrid.iso`, `live-image-amd64.hybrid.iso.sha256`, and `mnemosyne-python-sbom.cdx.json` to a prerelease and records provenance attestations. Treat that release as a developer preview, not a production OS image.
 
 ## Next testing milestone
 

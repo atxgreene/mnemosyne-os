@@ -18,6 +18,7 @@ on:
       - 'scripts/**'
       - 'seed/**'
       - 'tests/**'
+      - 'requirements.in'
       - 'requirements.txt'
       - 'README.md'
   push:
@@ -36,11 +37,12 @@ on:
       - 'scripts/**'
       - 'seed/**'
       - 'tests/**'
+      - 'requirements.in'
       - 'requirements.txt'
       - 'README.md'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build-iso:
@@ -50,23 +52,24 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
+      - name: Install locked Python dependencies
+        run: python -m pip install --require-hashes -r requirements.txt
 
       - name: Run test suite before ISO build
         run: python -m pytest tests -q
 
       - name: Prepare live-build source include
         run: bash ./scripts/prepare-live-build.sh
+
+      - name: Generate Python dependency SBOM
+        run: python scripts/generate-python-sbom.py --output dist/mnemosyne-python-sbom.cdx.json
 
       - name: Build hybrid ISO in Debian live-build container
         run: |
@@ -98,9 +101,16 @@ jobs:
           sudo apt-get install -y qemu-system-x86 xorriso
           MNEMOSYNE_QEMU_TIMEOUT_SECONDS=1200 bash ./scripts/smoke-test-iso-qemu.sh iso/live-build/live-image-amd64.hybrid.iso
 
+      - name: Stage release artifacts
+        run: |
+          mkdir -p release-artifacts
+          cp iso/live-build/live-image-amd64.hybrid.iso release-artifacts/
+          cp iso/live-build/live-image-amd64.hybrid.iso.sha256 release-artifacts/
+          cp dist/mnemosyne-python-sbom.cdx.json release-artifacts/
+
       - name: Upload QEMU serial log on smoke failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: mnemosyne-qemu-smoke-serial-log
           path: qemu-smoke-serial.log
@@ -108,23 +118,57 @@ jobs:
           retention-days: 7
 
       - name: Upload ISO artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: mnemosyne-os-live-image
-          path: |
-            iso/live-build/live-image-amd64.hybrid.iso
-            iso/live-build/live-image-amd64.hybrid.iso.sha256
+          path: release-artifacts/
           if-no-files-found: error
           retention-days: 7
 
+  publish-release:
+    name: Publish tagged developer-preview release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build-iso
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Download verified build artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: mnemosyne-os-live-image
+          path: release-artifacts
+
       - name: Publish tagged developer-preview release
-        if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${GITHUB_REF_NAME}" \
-            iso/live-build/live-image-amd64.hybrid.iso \
-            iso/live-build/live-image-amd64.hybrid.iso.sha256 \
+            release-artifacts/live-image-amd64.hybrid.iso \
+            release-artifacts/live-image-amd64.hybrid.iso.sha256 \
+            release-artifacts/mnemosyne-python-sbom.cdx.json \
+            --repo "${GITHUB_REPOSITORY}" \
             --title "Mnemosyne OS ${GITHUB_REF_NAME}" \
-            --notes "Developer-preview ISO built from ${GITHUB_SHA}. CI built the Debian Bookworm live image, generated checksums, and passed the QEMU smoke test before publishing. This is experimental: no hardware USB certification, no live persistence guarantee, no bundled offline LLM, and no API auth." \
+            --notes "Developer-preview ISO built from ${GITHUB_SHA}. CI built the Debian Bookworm live image with security updates enabled, installed hash-locked Python dependencies, generated a Python CycloneDX SBOM, generated checksums, and passed the QEMU smoke test before publishing. This is experimental: no hardware USB certification, no live persistence guarantee, no bundled offline LLM, and no API auth." \
             --prerelease
+
+  attest-release:
+    name: Attest tagged release artifacts
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build-iso
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - name: Download verified build artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: mnemosyne-os-live-image
+          path: release-artifacts
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        with:
+          subject-path: 'release-artifacts/*'
