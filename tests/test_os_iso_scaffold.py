@@ -56,6 +56,17 @@ def test_live_build_hooks_include_source_and_service():
     assert "python3-venv" in package_list
 
 
+def test_docs_do_not_advertise_an_empty_demo_asset():
+    docs_index = read("docs/index.html")
+    demo_asset = ROOT / "assets" / "mnemosyne_os_demo.gif"
+
+    if "mnemosyne_os_demo.gif" in docs_index:
+        assert demo_asset.exists(), "referenced demo asset must exist"
+        assert demo_asset.stat().st_size > 0, "referenced demo asset must not be empty"
+    else:
+        assert not demo_asset.exists(), "unreferenced empty placeholder should be removed"
+
+
 def test_iso_readme_has_build_and_flash_testing_commands():
     readme = read("iso/README.md")
     assert "lb build" in readme
