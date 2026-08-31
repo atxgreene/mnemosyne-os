@@ -33,11 +33,14 @@ SOURCE_INPUT="$(realpath "$SOURCE_INPUT_RAW")"
 SOURCE_DIR=/opt/mnemosyne-os/source
 VENV_DIR=/opt/mnemosyne-os/.venv
 DATA_DIR=/var/lib/mnemosyne
+MNEMOSYNE_PYTHON="${MNEMOSYNE_PYTHON:-python3}"
 SERVICE_SRC="$SOURCE_INPUT/packaging/systemd/mnemosyne.service"
 SMOKE_SERVICE_SRC="$SOURCE_INPUT/packaging/systemd/mnemosyne-iso-smoke.service"
 SMOKE_SCRIPT="$SOURCE_DIR/packaging/smoke/mnemosyne-iso-smoke.sh"
 
-if [ ! -f "$SOURCE_INPUT/requirements.txt" ] || [ ! -d "$SOURCE_INPUT/mnemosyne" ]; then
+if [ ! -f "$SOURCE_INPUT/requirements.txt" ] || \
+   [ ! -f "$SOURCE_INPUT/scripts/check-python-runtime.py" ] || \
+   [ ! -d "$SOURCE_INPUT/mnemosyne" ]; then
   echo "Source path does not look like mnemosyne-os: $SOURCE_INPUT" >&2
   exit 1
 fi
@@ -50,6 +53,8 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
   rsync \
   curl \
   ca-certificates
+
+"$MNEMOSYNE_PYTHON" "$SOURCE_INPUT/scripts/check-python-runtime.py"
 
 if ! id mnemosyne >/dev/null 2>&1; then
   useradd --system --home "$DATA_DIR" --create-home --shell /usr/sbin/nologin mnemosyne
@@ -68,7 +73,8 @@ else
   echo "Source already staged at $SOURCE_DIR; skipping self-rsync."
 fi
 
-python3 -m venv "$VENV_DIR"
+"$MNEMOSYNE_PYTHON" -m venv "$VENV_DIR"
+"$VENV_DIR/bin/python" "$SOURCE_DIR/scripts/check-python-runtime.py"
 "$VENV_DIR/bin/pip" install --require-hashes -r "$SOURCE_DIR/requirements.txt"
 
 MNEMOSYNE_HOME="$DATA_DIR" "$VENV_DIR/bin/python" "$SOURCE_DIR/scripts/load-starter-content.py"

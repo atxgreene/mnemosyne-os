@@ -6,6 +6,18 @@ ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github" / "workflows" / "build-iso.yml"
 
 
+def workflow_event_paths(text, event):
+    match = re.search(
+        rf"(?ms)^  {re.escape(event)}:\n.*?^    paths:\n(?P<paths>(?:^      - [^\n]+\n)+)",
+        text,
+    )
+    assert match, f"missing {event} path filters"
+    return {
+        line.removeprefix("- ").strip("'\"")
+        for line in map(str.strip, match.group("paths").splitlines())
+    }
+
+
 def test_live_build_auto_config_pins_supported_debian_release():
     auto_config = ROOT / "iso" / "live-build" / "auto" / "config"
     assert auto_config.exists()
@@ -62,6 +74,18 @@ def test_iso_build_workflow_prepares_builds_hashes_and_uploads_iso():
 def test_iso_build_workflow_runs_existing_test_suite_first():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "python -m pytest tests -q" in text
+
+
+def test_iso_build_workflow_runs_for_contract_only_changes():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    required_contract_paths = {"docs/adr/**", "upstream/**", "pyproject.toml"}
+
+    for event in ("pull_request", "push"):
+        paths = workflow_event_paths(text, event)
+        assert required_contract_paths <= paths, (
+            f"{event} must trigger ISO CI for contract-only changes; "
+            f"missing {required_contract_paths - paths}"
+        )
 
 
 def test_iso_build_workflow_can_publish_tagged_developer_preview_release():
