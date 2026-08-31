@@ -1,0 +1,59 @@
+{
+  "pin_policy": {
+    "execution_authority": "commit_sha",
+    "mutable_refs": "metadata_only"
+  },
+  "retrieved_at": "2026-08-30",
+  "schema": "mnemosyne.omarchy-upstream-lock",
+  "schema_version": 1,
+  "upstreams": [
+    {
+      "commit_sha": "13f18b2cb7286fb54f87daf571a031aa6af3d8f0",
+      "license": {
+        "source_path": "LICENSE",
+        "source_url": "https://github.com/omacom/omarchy/blob/13f18b2cb7286fb54f87daf571a031aa6af3d8f0/LICENSE",
+        "spdx_id": "MIT"
+      },
+      "name": "omarchy",
+      "ref": {
+        "kind": "tag",
+        "name": "v4.0.1"
+      },
+      "repository": "omacom/omarchy",
+      "repository_url": "https://github.com/omacom/omarchy",
+      "role": "Omarchy desktop and installation configuration"
+    },
+    {
+      "commit_sha": "d6e4060d566b41f27dd203fd014ad002f15d3616",
+      "license": {
+        "source_path": "LICENSE",
+        "source_url": "https://github.com/omacom/omarchy-iso/blob/d6e4060d566b41f27dd203fd014ad002f15d3616/LICENSE",
+        "spdx_id": "MIT"
+      },
+      "name": "omarchy-iso",
+      "ref": {
+        "kind": "branch",
+        "name": "quattro"
+      },
+      "repository": "omacom/omarchy-iso",
+      "repository_url": "https://github.com/omacom/omarchy-iso",
+      "role": "Omarchy ISO construction and installation-media tooling"
+    },
+    {
+      "commit_sha": "8bfa0546767365ccb242034424754035e8aef364",
+      "license": {
+        "source_path": "LICENSE",
+        "source_url": "https://github.com/omacom/omarchy-pkgs/blob/8bfa0546767365ccb242034424754035e8aef364/LICENSE",
+        "spdx_id": "MIT"
+      },
+      "name": "omarchy-pkgs",
+      "ref": {
+        "kind": "branch",
+        "name": "master"
+      },
+      "repository": "omacom/omarchy-pkgs",
+      "repository_url": "https://github.com/omacom/omarchy-pkgs",
+      "role": "Omarchy package repository definitions and build tooling"
+    }
+  ]
+}

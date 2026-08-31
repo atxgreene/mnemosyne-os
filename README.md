@@ -8,13 +8,24 @@
 
 This repository is now a real **v0.1 runnable local scaffold**, not just a concept page.
 
-- **Local Core (v0.1): usable for local/development workflows.** It provides a FastAPI server, JSONL memory, search, stats, graph data, Tugboat routing stub, skills store, CLI, and local dashboard.
+| Track | Maturity | Scope |
+| --- | --- | --- |
+| Debian developer-preview fixture | Maintained historical v0.1 fixture | Existing live-build/QEMU regression path; not the future substrate architecture. |
+| Portable service/package | Future — first substrate deliverable | Distro-independent packaging for the single Mnemosyne cognitive core. |
+| Optional Omarchy adapter | Future — after portable packaging | Thin, removable integration; not an Omarchy source merger or fork. |
+| Thin owned image | Eventual — last | Downstream image assembly only after package and adapter contracts are proven. |
+
+Phase 0.1 records the substrate decision in [`docs/adr/0001-omarchy-compatible-substrate.md`](docs/adr/0001-omarchy-compatible-substrate.md), immutable upstream provenance in [`upstream/omarchy.lock.json`](upstream/omarchy.lock.json), and applicable MIT notices in [`upstream/NOTICE-OMARCHY.md`](upstream/NOTICE-OMARCHY.md). These are contracts only; they do not implement the future package, adapter, or image.
+
+Under the target architecture, `atxgreene/Mnemosyne` is the sole authoritative cognitive implementation. The bundled `mnemosyne/` JSONL v0.1 implementation remains runnable today as a historical developer-preview compatibility fixture pending migration to that authoritative core. It is not the target authoritative core or a second long-term cognitive implementation, and it must not accrue competing long-term memory, policy, or cognition semantics.
+
+- **Bundled v0.1 fixture: usable for local/development workflows today.** It provides a FastAPI server, JSONL memory, search, stats, graph data, Tugboat routing stub, skills store, CLI, and local dashboard.
 - **ISO Distribution: experimental developer preview.** `main` builds a Debian Bookworm hybrid ISO in GitHub Actions and uploads checksumed artifacts. CI boots the ISO in QEMU and verifies `mnemosyne.service`, `/health`, and CLI search inside the VM.
 - **Not production-ready yet.** There is no auth, no durable ISO persistence story, no bundled offline LLM, and no hardware USB boot certification.
 
 What you can actually use today:
 
-- Install and run the local cognitive core with `scripts/install-local.sh` and `scripts/run-dev.sh`.
+- Install and run the bundled v0.1 developer-preview fixture with `scripts/install-local.sh` and `scripts/run-dev.sh`.
 - Store/search memories with `python bin/mnemosyne`.
 - Open the loopback-served dashboard wired to `GET /memory/graph`.
 - Inspect GitHub Actions artifacts from the `Build Mnemosyne OS ISO` workflow for the latest experimental ISO, checksum, and Python CycloneDX SBOM.
@@ -35,7 +46,6 @@ What is still future work:
 
 ```text
 mnemosyne-os/
-├── assets/                         # Demo GIF and visual assets
 ├── bin/mnemosyne                   # Native CLI helper
 ├── dashboard/mnemosyne-panels.html # Local live dashboard
 ├── docs/
@@ -62,6 +72,8 @@ mnemosyne-os/
 ```
 
 ## Quick start
+
+Python 3.11+ is required. The local and OS installers fail fast if the selected interpreter—or an existing virtual environment—uses an older Python, before installing locked dependencies. By default they select `python3`; set `MNEMOSYNE_PYTHON=/path/to/python3.11` to choose another interpreter.
 
 ```bash
 git clone https://github.com/atxgreene/mnemosyne-os.git
@@ -108,7 +120,7 @@ python bin/mnemosyne dashboard
 
 ## Current limitations
 
-- Storage uses simple JSONL files; this is intentional for v0.1 but not the long-term memory backend.
+- JSONL is active storage for this runnable v0.1 fixture, but it is temporary compatibility/import infrastructure in the target architecture.
 - API is local-only and unauthenticated; do not bind it to a public interface.
 - No bundled offline LLM yet; routing and skill distillation are still scaffold-level.
 - QEMU smoke testing passes in CI, but hardware USB boot testing is still a separate gate.
@@ -116,7 +128,7 @@ python bin/mnemosyne dashboard
 
 ## Distribution / live-build path
 
-The active distribution path is Debian Bookworm userspace via live-build, not a custom kernel-first distro and not the older Cubic-first Ubuntu path. The workflow at `.github/workflows/build-iso.yml` builds the ISO on `main`, produces checksumed artifacts, and runs the QEMU smoke test automatically.
+The maintained Debian v0.1 distribution fixture uses Bookworm userspace via live-build, not a custom kernel-first distro and not the older Cubic-first Ubuntu path. The workflow at `.github/workflows/build-iso.yml` builds the ISO on `main`, produces checksumed artifacts, and runs the QEMU smoke test automatically.
 
 ### GitHub Actions ISO build
 
