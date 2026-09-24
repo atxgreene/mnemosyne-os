@@ -1,0 +1,35 @@
+# Maintainer: atxgreene
+
+pkgname=mnemosyne-core
+pkgver=0.9.8
+pkgrel=1
+pkgdesc='Authoritative Mnemosyne L0-L5 cognitive core'
+arch=('any')
+url='https://github.com/atxgreene/Mnemosyne'
+license=('MIT')
+depends=('python')
+makedepends=('python-build' 'python-installer' 'python-setuptools')
+provides=("mnemosyne-harness=${pkgver}")
+_commit='bbaffde0b8cd8fca2ff08a3cec08d2e763c76982'
+_archive_url='https://codeload.github.com/atxgreene/Mnemosyne/tar.gz/bbaffde0b8cd8fca2ff08a3cec08d2e763c76982'
+source=(
+  "${pkgname}-${pkgver}-${_commit}.tar.gz::${_archive_url}"
+  '../systemd/user/mnemosyne.service'
+)
+sha256sums=(
+  '1626eae4bfe8efbf5d38e60e171db515da880d703c293b0a2fcee58a9d52920c'
+  '28324c90985fb071fd9975a7479ee4d1cdfa87ede70fc98022cdc78c2fed1131'
+)
+
+build() {
+  cd "Mnemosyne-${_commit}"
+  python -m build --wheel --no-isolation
+}
+
+package() {
+  cd "Mnemosyne-${_commit}"
+  python -m installer --destdir="$pkgdir" dist/*.whl
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 "$srcdir/mnemosyne.service" \
+    "$pkgdir/usr/lib/systemd/user/mnemosyne.service"
+}
