@@ -1,0 +1,39 @@
+{
+  "pin_policy": {
+    "execution_authority": {
+      "commit_field": "upstreams[].commit_sha",
+      "integrity_field": "upstreams[].source_archive.sha256",
+      "policy": "exact_commit_and_sha256"
+    },
+    "mutable_refs": "metadata_only"
+  },
+  "schema": "mnemosyne.authoritative-core-lock",
+  "schema_version": 1,
+  "upstreams": [
+    {
+      "commit_sha": "bbaffde0b8cd8fca2ff08a3cec08d2e763c76982",
+      "license": {
+        "sha256": "3f4582bcef89d07c0504ed023dad80cdb526bf529bd4e8fb04a87e19332ab3b7",
+        "source_url": "https://raw.githubusercontent.com/atxgreene/Mnemosyne/bbaffde0b8cd8fca2ff08a3cec08d2e763c76982/LICENSE",
+        "spdx_id": "MIT"
+      },
+      "name": "mnemosyne-core",
+      "release": {
+        "tag": "v0.9.8",
+        "version": "0.9.8",
+        "wheel": {
+          "filename": "mnemosyne_harness-0.9.8-py3-none-any.whl",
+          "sha256": "32ceeec5380b01eb1d0692c5c17c3b94bfbeb00b56fc2cdfdad3087f7bd5f0a9",
+          "url": "https://github.com/atxgreene/Mnemosyne/releases/download/v0.9.8/mnemosyne_harness-0.9.8-py3-none-any.whl"
+        }
+      },
+      "repository": "atxgreene/Mnemosyne",
+      "repository_url": "https://github.com/atxgreene/Mnemosyne",
+      "role": "sole authoritative L0-L5 cognitive core implementation",
+      "source_archive": {
+        "sha256": "1626eae4bfe8efbf5d38e60e171db515da880d703c293b0a2fcee58a9d52920c",
+        "url": "https://codeload.github.com/atxgreene/Mnemosyne/tar.gz/bbaffde0b8cd8fca2ff08a3cec08d2e763c76982"
+      }
+    }
+  ]
+}

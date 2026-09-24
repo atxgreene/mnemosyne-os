@@ -1,77 +1,108 @@
 # Mnemosyne OS
 
-**A local-first cognitive-core project that currently ships as a Python app plus an experimental Debian live ISO path. Mnemosyne is the living memory core, Tugboat is the routing layer, and an Obsidian-style graph is the primary interface.**
+**A local-first OS integration project that packages the authoritative Mnemosyne cognitive core while retaining an explicitly separate historical developer-preview fixture.**
 
 > Stellas Hereditabimus — we will inherit the stars.
 
-## Current maturity (August 2026)
+## Current maturity (September 2026)
 
-This repository is now a real **v0.1 runnable local scaffold**, not just a concept page.
+Phase 1 is real package work: `mnemosyne-core` builds the authoritative L0–L5 core from the immutable public Mnemosyne v0.9.8 source archive and installs its canonical CLI and loopback service. It is not yet an adapter or a new image.
 
 | Track | Maturity | Scope |
 | --- | --- | --- |
+| Authoritative core package | Phase 1 — implemented | Arch package and hardened systemd user unit for verified upstream v0.9.8. |
 | Debian developer-preview fixture | Maintained historical v0.1 fixture | Existing live-build/QEMU regression path; not the future substrate architecture. |
-| Portable service/package | Future — first substrate deliverable | Distro-independent packaging for the single Mnemosyne cognitive core. |
+| Portable service/package | Current — Phase 1 | Distro-independent packaging for the single Mnemosyne cognitive core; Arch is the first recipe. |
 | Optional Omarchy adapter | Future — after portable packaging | Thin, removable integration; not an Omarchy source merger or fork. |
 | Thin owned image | Eventual — last | Downstream image assembly only after package and adapter contracts are proven. |
 
-Phase 0.1 records the substrate decision in [`docs/adr/0001-omarchy-compatible-substrate.md`](docs/adr/0001-omarchy-compatible-substrate.md), immutable upstream provenance in [`upstream/omarchy.lock.json`](upstream/omarchy.lock.json), and applicable MIT notices in [`upstream/NOTICE-OMARCHY.md`](upstream/NOTICE-OMARCHY.md). These are contracts only; they do not implement the future package, adapter, or image.
+Phase 0.1 records the substrate decision in [`docs/adr/0001-omarchy-compatible-substrate.md`](docs/adr/0001-omarchy-compatible-substrate.md), immutable Omarchy provenance in [`upstream/omarchy.lock.json`](upstream/omarchy.lock.json), and applicable MIT notices in [`upstream/NOTICE-OMARCHY.md`](upstream/NOTICE-OMARCHY.md).
 
-Under the target architecture, `atxgreene/Mnemosyne` is the sole authoritative cognitive implementation. The bundled `mnemosyne/` JSONL v0.1 implementation remains runnable today as a historical developer-preview compatibility fixture pending migration to that authoritative core. It is not the target authoritative core or a second long-term cognitive implementation, and it must not accrue competing long-term memory, policy, or cognition semantics.
+Phase 1 records the authoritative-core decision in [`docs/adr/0002-authoritative-core-package.md`](docs/adr/0002-authoritative-core-package.md), exact source/release/license pins in [`upstream/mnemosyne-core.lock.json`](upstream/mnemosyne-core.lock.json), and full attribution in [`upstream/NOTICE-MNEMOSYNE-CORE.md`](upstream/NOTICE-MNEMOSYNE-CORE.md). The package is built by [`packaging/arch/PKGBUILD`](packaging/arch/PKGBUILD), verified by an installed-runtime smoke test, and served with [`packaging/systemd/user/mnemosyne.service`](packaging/systemd/user/mnemosyne.service).
 
+Under the target architecture, `atxgreene/Mnemosyne` is the sole authoritative cognitive implementation. The bundled `mnemosyne/` JSONL v0.1 implementation remains runnable today as a historical developer-preview compatibility fixture pending migration to that authoritative core. It is not the target authoritative core or a second long-term cognitive implementation, and it must not accrue competing long-term memory, policy, or cognition semantics. In Phase 1 it is retained only as a historical compatibility fixture.
+
+The package does not install or replace the legacy fixture. The two paths remain deliberately separate in Phase 1:
+
+- **Authoritative package: usable for Arch package evaluation.** It provides upstream SQLite/FTS persistence, six-tier stats, `mnemosyne-memory`, `mnemosyne-serve`, and the upstream UI on loopback.
 - **Bundled v0.1 fixture: usable for local/development workflows today.** It provides a FastAPI server, JSONL memory, search, stats, graph data, Tugboat routing stub, skills store, CLI, and local dashboard.
-- **ISO Distribution: experimental developer preview.** `main` builds a Debian Bookworm hybrid ISO in GitHub Actions and uploads checksumed artifacts. CI boots the ISO in QEMU and verifies `mnemosyne.service`, `/health`, and CLI search inside the VM.
-- **Not production-ready yet.** There is no auth, no durable ISO persistence story, no bundled offline LLM, and no hardware USB boot certification.
+- **ISO Distribution: experimental developer preview.** `main` builds the legacy Debian Bookworm hybrid ISO and verifies its existing service/API path in QEMU.
+- **Not production-ready yet.** There is no completed data migration, packaged thin adapter, owned Arch image, durable ISO persistence story, or hardware USB boot certification.
 
 What you can actually use today:
 
+- Build/install the v0.9.8 authoritative package on Arch and start its user service manually.
 - Install and run the bundled v0.1 developer-preview fixture with `scripts/install-local.sh` and `scripts/run-dev.sh`.
-- Store/search memories with `python bin/mnemosyne`.
-- Open the loopback-served dashboard wired to `GET /memory/graph`.
-- Inspect GitHub Actions artifacts from the `Build Mnemosyne OS ISO` workflow for the latest experimental ISO, checksum, and Python CycloneDX SBOM.
+- Store/search fixture memories with `python bin/mnemosyne` or use the packaged core's `mnemosyne-memory` command.
+- Inspect short-lived package and legacy ISO artifacts from their separate GitHub Actions workflows.
 
 What is still future work:
 
-- Published/release-tagged ISO download
+- Data migration from the historical JSONL fixture into the authoritative SQLite core
+- Future thin Omarchy adapter
+- Future owned image
 - Hardware USB boot testing beyond QEMU
-- Persistent writable memory volume in the live ISO
-- Real vector store backend
-- LLM-powered skill distillation
-- Profile isolation
-- Security Guardian enforcement beyond routing hints
+- Persistent writable memory volume in the legacy live ISO
+- Profile isolation and reviewed authentication/authorization controls
 - Offline local model bundle
-- Plymouth/GRUB visual theming package
 
 ## Repository structure
 
 ```text
 mnemosyne-os/
-├── bin/mnemosyne                   # Native CLI helper
-├── dashboard/mnemosyne-panels.html # Local live dashboard
+├── bin/mnemosyne                   # Historical fixture CLI helper
+├── dashboard/mnemosyne-panels.html # Historical fixture dashboard
 ├── docs/
+│   ├── adr/                        # Substrate and authoritative-core decisions
 │   ├── index.html                  # GitHub Pages site
 │   └── plans/                      # Implementation roadmaps
-├── iso/                            # live-build scaffold + ISO test docs
+├── iso/                            # Legacy live-build scaffold + ISO test docs
 ├── kernel/                         # custom-kernel track docs/placeholders
-├── mnemosyne/
-│   ├── core/memory.py              # Local memory store + graph builder
-│   ├── services/api_server.py      # FastAPI server
-│   ├── skills/store.py             # Starter skill store
-│   └── tugboat/router.py           # Declarative routing stub
-├── packaging/                      # installer + systemd unit for OS image
-├── scripts/
-│   ├── install-local.sh            # Local dev installer
-│   ├── prepare-live-build.sh       # Copies repo source into live-build tree
-│   ├── run-dev.sh                  # Start API server
-│   ├── load-starter-content.py     # Seed memory + skills
-│   └── build-mnemosyne-os.sh       # Legacy Cubic/Ubuntu helper
-├── seed/                           # Starter memories and skills
-├── tests/                          # Pytest suite
+├── mnemosyne/                      # Historical FastAPI/JSONL compatibility fixture
+│   ├── core/memory.py
+│   ├── services/api_server.py
+│   ├── skills/store.py
+│   └── tugboat/router.py
+├── packaging/
+│   ├── arch/                       # Authoritative-core PKGBUILD + installed smoke
+│   ├── systemd/user/               # Authoritative-core user service
+│   └── install-mnemosyne-os.sh     # Legacy Debian/ISO fixture installer
+├── scripts/                        # Legacy fixture and ISO helpers
+├── seed/                           # Legacy fixture starter memories and skills
+├── tests/                          # Legacy + package/supply-chain contracts
+├── upstream/                       # Immutable provenance and attribution
 ├── LICENSE
 └── PHILOSOPHY.md
 ```
 
-## Quick start
+## Authoritative core package (Arch/Omarchy)
+
+On an Arch host, build and install the immutable v0.9.8 package:
+
+```bash
+cd packaging/arch
+makepkg --syncdeps --install
+bash smoke-test.sh
+```
+
+The package installs the upstream commands and a user unit, but does not enable
+or start it. Start it explicitly when wanted:
+
+```bash
+systemctl --user start mnemosyne.service
+mnemosyne-memory stats
+xdg-open http://127.0.0.1:8484/ui
+```
+
+Persistent package state lives under `%S/mnemosyne` (normally
+`~/.local/state/mnemosyne`). Automatic proposal application is disabled. The
+current package is the portable core layer; the future thin Omarchy adapter
+and future owned image are not delivered in Phase 1.
+
+## Quick start (historical fixture)
+
+The instructions below run the separate bundled FastAPI/JSONL compatibility
+fixture. They do not install the authoritative package.
 
 Python 3.11+ is required. The local and OS installers fail fast if the selected interpreter—or an existing virtual environment—uses an older Python, before installing locked dependencies. By default they select `python3`; set `MNEMOSYNE_PYTHON=/path/to/python3.11` to choose another interpreter.
 
