@@ -14,12 +14,19 @@ _commit='bbaffde0b8cd8fca2ff08a3cec08d2e763c76982'
 _archive_url='https://codeload.github.com/atxgreene/Mnemosyne/tar.gz/bbaffde0b8cd8fca2ff08a3cec08d2e763c76982'
 source=(
   "${pkgname}-${pkgver}-${_commit}.tar.gz::${_archive_url}"
-  '../systemd/user/mnemosyne.service'
+  'mnemosyne.service'
+  'setuptools-arch-compat.patch'
 )
 sha256sums=(
   '1626eae4bfe8efbf5d38e60e171db515da880d703c293b0a2fcee58a9d52920c'
-  '28324c90985fb071fd9975a7479ee4d1cdfa87ede70fc98022cdc78c2fed1131'
+  'f240137f326fd4312a347ffe37b867a0c101e42ccc6cdc8516983042ba5f5260'
+  '8869389e4b79cc879ee4758f84afc466dff74741fbc869571bb541f6eb2826ad'
 )
+
+prepare() {
+  cd "Mnemosyne-${_commit}"
+  patch -Np1 -i "$srcdir/setuptools-arch-compat.patch"
+}
 
 build() {
   cd "Mnemosyne-${_commit}"

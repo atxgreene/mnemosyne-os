@@ -24,15 +24,18 @@ The release tag and version are descriptive metadata; mutable references are
 never execution authority.
 
 The Arch package builds the upstream wheel from that commit-pinned source
-archive. This repository does not fork or copy cognition. It owns only the
-downstream provenance, package recipe, service policy, smoke tests, and future
-integration layers. Full pinned MIT attribution is preserved in
+archive. A checksum-pinned downstream patch only widens the build-system
+Setuptools constraint to the compatible Arch-provided 84.x release; it does not
+change upstream runtime or cognitive code.
+This repository does not fork or copy cognition. It owns only the downstream
+provenance, package recipe, service policy, smoke tests, and future integration
+layers. Full pinned MIT attribution is preserved in
 [`upstream/NOTICE-MNEMOSYNE-CORE.md`](../../upstream/NOTICE-MNEMOSYNE-CORE.md).
 
 The package installs a hardened systemd user service. It binds
-`mnemosyne-serve` to loopback, writes under the user's state directory, names
-an explicit projects directory, and keeps automatic proposal application off.
-Installation does not enable or start the unit automatically.
+`mnemosyne-serve` to loopback, binds both the CLI projects option and
+`MNEMOSYNE_PROJECTS_DIR` to `%S/mnemosyne`, and keeps automatic proposal
+application off. Installation does not enable or start the unit automatically.
 
 ## Compatibility boundary
 

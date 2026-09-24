@@ -188,6 +188,17 @@ def validate_pkgbuild_against_lock(document: dict, pkgbuild: str) -> list[str]:
     checksum = item["source_archive"]["sha256"]
     if pkgbuild.count(checksum) != 1:
         errors.append("PKGBUILD source archive SHA-256 drift")
+    expected_archive_source = (
+        '"${pkgname}-${pkgver}-${_commit}.tar.gz::${_archive_url}"'
+    )
+    source_block = re.search(r"(?ms)^source=\(\n(?P<body>.*?)^\)$", pkgbuild)
+    archive_source_count = (
+        source_block.group("body").count(expected_archive_source)
+        if source_block
+        else 0
+    )
+    if archive_source_count != 1:
+        errors.append("PKGBUILD archive source is not lock-bound")
     return errors
 
 
@@ -302,6 +313,20 @@ def test_pkgbuild_cannot_drift_from_lock() -> None:
     sabotaged = pkgbuild.replace(item["source_archive"]["sha256"], "f" * 64, 1)
     assert validate_pkgbuild_against_lock(load_lock(), sabotaged) == [
         "PKGBUILD source archive SHA-256 drift"
+    ]
+
+
+def test_pkgbuild_rejects_mutable_actual_source_with_unused_pinned_assignment() -> None:
+    pkgbuild = PKGBUILD_PATH.read_text(encoding="utf-8")
+    pinned_source = '"${pkgname}-${pkgver}-${_commit}.tar.gz::${_archive_url}"'
+    mutable_source = (
+        '"${pkgname}-${pkgver}.tar.gz::https://codeload.github.com/'
+        'atxgreene/Mnemosyne/tar.gz/refs/tags/v0.9.8"'
+    )
+    mutated = pkgbuild.replace(pinned_source, mutable_source, 1)
+    assert mutated != pkgbuild
+    assert validate_pkgbuild_against_lock(load_lock(), mutated) == [
+        "PKGBUILD archive source is not lock-bound"
     ]
 
 
